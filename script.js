@@ -890,7 +890,14 @@ function adminViewExam(id) {
 
     `;
 }
+function deleteExam(id) {
+    if (!confirm("Are you sure you want to delete this exam?")) return;
 
+    exams = exams.filter(exam => exam.id !== id);
+    localStorage.setItem("exams", JSON.stringify(exams));
+
+    renderExams();
+}
 
   
                 
