@@ -105,35 +105,40 @@ let defaultExams = [
     }
 ];
 
-let exams;
+let exams = [];
 
-const savedExams = localStorage.getItem("exams");
-
-if (savedExams) {
+function loadExams() {
     try {
-        exams = JSON.parse(savedExams);
+        const saved = localStorage.getItem("exams");
 
-        if (!Array.isArray(exams) || exams.length === 0) {
-            exams = defaultExams;
-            localStorage.setItem(
-                "exams",
-                JSON.stringify(exams)
-            );
+        if (saved) {
+            const parsed = JSON.parse(saved);
+
+            if (Array.isArray(parsed)) {
+                exams = parsed;
+            }
         }
     } catch (error) {
-        exams = defaultExams;
+        exams = [];
+    }
+
+    if (!Array.isArray(exams)) {
+        exams = [];
+    }
+
+    if (exams.length === 0) {
+        exams = JSON.parse(
+            JSON.stringify(defaultExams)
+        );
+
         localStorage.setItem(
             "exams",
             JSON.stringify(exams)
         );
     }
-} else {
-    exams = defaultExams;
-    localStorage.setItem(
-        "exams",
-        JSON.stringify(exams)
-    );
 }
+
+loadExams();
 
 let currentUser = "";
 let currentExam = null;
@@ -145,14 +150,22 @@ let remaining = 0;
 const $ = id => document.getElementById(id);
 
 function show(id) {
-    $(id).classList.remove("hidden");
+    const element = $(id);
+
+    if (element) {
+        element.classList.remove("hidden");
+    }
 }
 
 function hide(id) {
-    $(id).classList.add("hidden");
+    const element = $(id);
+
+    if (element) {
+        element.classList.add("hidden");
+    }
 }
 
-$("loginBtn").onclick = () => {
+$("loginBtn").onclick = function () {
     const name = $("nameInput").value.trim();
 
     if (!name) {
@@ -165,14 +178,16 @@ $("loginBtn").onclick = () => {
     hide("loginScreen");
     show("logoutBtn");
 
-    if ($("roleInput").value === "admin") {
+    const role = $("roleInput").value;
+
+    if (role === "admin") {
         loadAdmin();
     } else {
         loadStudent();
     }
 };
 
-$("logoutBtn").onclick = () => {
+$("logoutBtn").onclick = function () {
     clearInterval(timerId);
     location.reload();
 };
@@ -205,16 +220,20 @@ function loadStudent() {
                 ...history.map(item => item.score)
             ) + "%"
             : "—";
-};
+}
 
 function renderExams() {
-    const examList = $("examList");
+const examList = $("examList");
 
-    if (!examList) return;
+    if (!examList) {
+        return;
+    }
 
     if (!exams.length) {
         examList.innerHTML = `
-            <p>No examinations are currently available.</p>
+            <p>
+                No examinations are currently available.
+            </p>
         `;
         return;
     }
@@ -241,7 +260,8 @@ function renderExams() {
                 </p>
 
                 <button
-                    onclick="startExam(${exam.id})">
+                    onclick="startExam(${exam.id})"
+                >
                     Start Exam
                 </button>
 
@@ -287,7 +307,7 @@ function startTimer() {
 
     updateTimer();
 
-    timerId = setInterval(() => {
+    timerId = setInterval(function () {
         remaining--;
 
         updateTimer();
@@ -311,6 +331,10 @@ function updateTimer() {
 }
 
 function renderQuestion() {
+    if (!currentExam) {
+        return;
+    }
+
     const question =
         currentExam.questions[currentIndex];
 
@@ -321,33 +345,35 @@ function renderQuestion() {
         question.q;
 
     $("options").innerHTML =
-        question.o.map((option, index) => `
-            <label class="option">
+        question.o.map(
+            (option, index) => `
+                <label class="option">
 
-                <input
-                    type="radio"
-                    name="answer"
-                    value="${index}"
-                    ${answers[currentIndex] === index
-                        ? "checked"
-                        : ""}
-                >
+                    <input
+                        type="radio"
+                        name="answer"
+                        value="${index}"
+                        ${answers[currentIndex] === index
+                            ? "checked"
+                            : ""}
+                    >
 
-                ${option}
+                    ${option}
 
-            </label>
-        `).join("");
+                </label>
+            `
+        ).join("");
 
     $("options")
         .querySelectorAll("input")
-        .forEach(radio => {
-
-            radio.onchange = () => {
-                answers[currentIndex] =
-                    Number(radio.value);
-            };
-
-        });
+        .forEach(
+            radio => {
+                radio.onchange = function () {
+                    answers[currentIndex] =
+                        Number(radio.value);
+                };
+            }
+        );
 
     $("prevBtn").disabled =
         currentIndex === 0;
@@ -365,14 +391,14 @@ function renderQuestion() {
     );
 }
 
-$("prevBtn").onclick = () => {
+$("prevBtn").onclick = function () {
     if (currentIndex > 0) {
         currentIndex--;
         renderQuestion();
     }
 };
 
-$("nextBtn").onclick = () => {
+$("nextBtn").onclick = function () {
     if (
         currentIndex <
         currentExam.questions.length - 1
@@ -382,7 +408,7 @@ $("nextBtn").onclick = () => {
     }
 };
 
-$("submitBtn").onclick = () => {
+$("submitBtn").onclick = function () {
     if (
         confirm(
             "Are you sure you want to submit the exam?"
@@ -393,18 +419,24 @@ $("submitBtn").onclick = () => {
 };
 
 function finishExam() {
+    if (!currentExam) {
+        return;
+    }
+
     clearInterval(timerId);
 
     let correct = 0;
 
-    answers.forEach((answer, index) => {
-        if (
-            answer ===
-            currentExam.questions[index].a
-        ) {
-            correct++;
+    answers.forEach(
+        (answer, index) => {
+            if (
+                answer ===
+                currentExam.questions[index].a
+            ) {
+                correct++;
+            }
         }
-    });
+    );
 
     const score =
         Math.round(
@@ -443,7 +475,7 @@ function finishExam() {
         `You answered ${correct} out of ${currentExam.questions.length} questions correctly.`;
 }
 
-$("backToExams").onclick = () => {
+$("backToExams").onclick = function () {
     loadStudent();
 };
 
@@ -586,50 +618,51 @@ function loadAdmin() {
             >
 
                 ${
-                    exams.length
-                        ? exams.map(exam => `
-                            <div class="exam">
+exams.length
+                        ? exams.map(
+                            exam => `
+                                <div class="exam">
 
-                                <span class="badge">
-                                    ACTIVE
-                                </span>
+                                    <span class="badge">
+                                        ACTIVE
+                                    </span>
 
-                                <h4>
-                                    ${exam.title}
-                                </h4>
+                                    <h4>
+                                        ${exam.title}
+                                    </h4>
 
-                                <p>
-                                    ${exam.questions.length}
-                                    Questions
-                                </p>
+                                    <p>
+                                        ${exam.questions.length}
+                                        Questions
+                                    </p>
 
-                                <p>
-                                    Duration:
-                                    ${exam.duration}
-                                    Minutes
-                                </p>
+                                    <p>
+                                        Duration:
+                                        ${exam.duration}
+                                        Minutes
+                                    </p>
 
-                                <button
-                                    onclick="adminViewExam(${exam.id})"
-                                >
-                                    View Questions
-                                </button>
+                                    <button
+                                        onclick="adminViewExam(${exam.id})"
+                                    >
+                                        View Questions
+                                    </button>
 
-                                <button
-                                    onclick="deleteExam(${exam.id})"
-                                    style="
-                                        background:#ff3333;
-                                        color:white;
-                                        border:none;
-                                        margin-top:10px;
-                                    "
-                                >
-                                    Delete Exam
-                                </button>
+                                    <button
+                                        onclick="deleteExam(${exam.id})"
+                                        style="
+                                            background:#ff3333;
+                                            color:white;
+                                            border:none;
+                                            margin-top:10px;
+                                        "
+                                    >
+                                        Delete Exam
+                                    </button>
 
-                            </div>
-                        `).join("")
-
+                                </div>
+                            `
+                        ).join("")
                         : `
                             <p>
                                 No examinations available.
@@ -654,65 +687,70 @@ function loadAdmin() {
                     ? history
                         .slice(-10)
                         .reverse()
-                        .map((item, index) => {
+                        .map(
+                            (item, index) => {
 
-                            const actualIndex =
-                                history.length - 1 - index;
+                                const actualIndex =
+                                    history.length -
+                                    1 -
+                                    index;
 
-                            return `
-                                <div
-                                    class="exam"
-                                    style="
-                                        margin-bottom:12px;
-                                    "
-                                >
-
-                                    <strong>
-                                        ${item.name}
-                                    </strong>
-
-                                    <p>
-                                        ${item.exam}
-                                    </p>
-
-                                    <p>
-                                        Score:
-                                        <strong
-                                            style="
-                                                color:#00ff66;
-                                                text-shadow:
-                                                0 0 8px #00ff66;
-                                            "
-                                        >
-                                            ${item.score}%
-                                        </strong>
-                                    </p>
-
-                                    <small>
-                                        ${item.date}
-                                    </small>
-
-                                    <br><br>
-
-                                    <button
-                                        onclick="deleteResult(${actualIndex})"
+                                return `
+                                    <div
+                                        class="exam"
                                         style="
-                                            background:#ff3333;
-                                            color:white;
-                                            border:none;
-                                            padding:8px 14px;
-                                            border-radius:6px;
-                                            cursor:pointer;
+                                            margin-bottom:12px;
                                         "
                                     >
-                                        Delete Result
-                                    </button>
 
-                                </div>
-                            `;
-                        })
+                                        <strong>
+                                            ${item.name}
+                                        </strong>
+
+                                        <p>
+                                            ${item.exam}
+                                        </p>
+
+                                        <p>
+                                            Score:
+
+                                            <strong
+                                                style="
+                                                    color:#00ff66;
+                                                    text-shadow:
+                                                    0 0 8px #00ff66;
+                                                "
+                                            >
+                                                ${item.score}%
+                                            </strong>
+
+                                        </p>
+
+                                        <small>
+                                            ${item.date}
+                                        </small>
+
+                                        <br><br>
+
+                                        <button
+                                            onclick="deleteResult(${actualIndex})"
+                                            style="
+                                                background:#ff3333;
+                                                color:white;
+                                                border:none;
+                                                padding:8px 14px;
+                                                border-radius:6px;
+                                                cursor:pointer;
+                                            "
+                                        >
+                                            Delete Result
+                                        </button>
+
+                                    </div>
+                                `;
+                            }
+                        )
                         .join("")
-
                     : `
                         <p>
                             No student attempts yet.
@@ -730,7 +768,9 @@ function deleteExam(id) {
             item => item.id === id
         );
 
-    if (!exam) return;
+    if (!exam) {
+        return;
+    }
 
     if (
         !confirm(
@@ -742,7 +782,7 @@ function deleteExam(id) {
 
     exams =
         exams.filter(
-            exam => exam.id !== id
+            item => item.id !== id
         );
 
     localStorage.setItem(
@@ -790,7 +830,9 @@ function adminViewExam(id) {
             item => item.id === id
         );
 
-    if (!exam) return;
+    if (!exam) {
+        return;
+    }
 
     $("adminScreen").innerHTML = `
 
@@ -849,8 +891,8 @@ function adminViewExam(id) {
 
                         </div>
                     `
-                ).join(") 
-}
+                ).join("")
+            }
 
             <button
                 onclick="loadAdmin()"
