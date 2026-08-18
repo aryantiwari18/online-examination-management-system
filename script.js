@@ -1,4 +1,4 @@
-       let defaultExams = [
+let defaultExams = [
     {
         id: 1,
         title: "Software Engineering Fundamentals",
