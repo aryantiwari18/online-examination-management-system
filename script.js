@@ -225,36 +225,23 @@ function loadStudent() {
 /* =========================
    EXAM LIST
 ========================= */
+examList.innerHTML += `
+    <div class="exam-card">
+        <h3>${exam.title}</h3>
+        <p>Duration: ${exam.duration} minutes</p>
+        <button onclick="deleteExam(${exam.id})">Delete</button>
+    </div>
+`;
 
-function renderExams() {
+         
+          
 
-    $("examList").innerHTML =
-        exams.map(exam => {
+                   
+                        
+                    
 
-            return `
-                <div class="exam">
-
-                    <h4>
-                        ${exam.title}
-                    </h4>
-
-                    <p>
-                        ${exam.questions.length}
-                        Questions •
-                        ${exam.duration}
-                        Minutes
-                    </p>
-
-                    <button
-                        onclick="startExam(${exam.id})">
-                        Start Exam
-                    </button>
-
-                </div>
-            `;
-
-        }).join("");
-}
+                   
+                       
 
 
 /* =========================
