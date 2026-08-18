@@ -1,21 +1,14 @@
-const exams = [
+let exams = [
     {
         id: 1,
         title: "Software Engineering Fundamentals",
         duration: 5,
-
         questions: [
             {
                 q: "Which model follows a sequential development process?",
-                o: [
-                    "Agile",
-                    "Waterfall",
-                    "Spiral",
-                    "Prototype"
-                ],
+                o: ["Agile", "Waterfall", "Spiral", "Prototype"],
                 a: 1
             },
-
             {
                 q: "What does SDLC stand for?",
                 o: [
@@ -26,18 +19,11 @@ const exams = [
                 ],
                 a: 0
             },
-
             {
                 q: "Which document describes software requirements?",
-                o: [
-                    "SRS",
-                    "WBS",
-                    "Gantt Chart",
-                    "Risk Matrix"
-                ],
+                o: ["SRS", "WBS", "Gantt Chart", "Risk Matrix"],
                 a: 0
             },
-
             {
                 q: "What is the main purpose of software testing?",
                 o: [
@@ -48,7 +34,6 @@ const exams = [
                 ],
                 a: 1
             },
-
             {
                 q: "Which diagram shows system actors and their interactions?",
                 o: [
@@ -61,12 +46,10 @@ const exams = [
             }
         ]
     },
-
     {
         id: 2,
         title: "Project Management Basics",
         duration: 5,
-
         questions: [
             {
                 q: "What does WBS stand for?",
@@ -78,7 +61,6 @@ const exams = [
                 ],
                 a: 0
             },
-
             {
                 q: "A Gantt chart is mainly used for:",
                 o: [
@@ -89,7 +71,6 @@ const exams = [
                 ],
                 a: 1
             },
-
             {
                 q: "Risk management includes:",
                 o: [
@@ -100,7 +81,6 @@ const exams = [
                 ],
                 a: 0
             },
-
             {
                 q: "A project milestone represents:",
                 o: [
@@ -111,7 +91,6 @@ const exams = [
                 ],
                 a: 0
             },
-
             {
                 q: "Which of the following is a project constraint?",
                 o: [
@@ -126,7 +105,6 @@ const exams = [
     }
 ];
 
-
 let currentUser = "";
 let currentExam = null;
 let currentIndex = 0;
@@ -134,28 +112,17 @@ let answers = [];
 let timerId = null;
 let remaining = 0;
 
-
-const $ = (id) => {
-    return document.getElementById(id);
-};
-
+const $ = (id) => document.getElementById(id);
 
 function show(id) {
     $(id).classList.remove("hidden");
 }
 
-
 function hide(id) {
     $(id).classList.add("hidden");
 }
 
-
-/* =========================
-   LOGIN
-========================= */
-
 $("loginBtn").onclick = () => {
-
     const name = $("nameInput").value.trim();
 
     if (!name) {
@@ -175,25 +142,12 @@ $("loginBtn").onclick = () => {
     }
 };
 
-
-/* =========================
-   LOGOUT
-========================= */
-
 $("logoutBtn").onclick = () => {
-
     clearInterval(timerId);
-
     location.reload();
 };
 
-
-/* =========================
-   STUDENT DASHBOARD
-========================= */
-
 function loadStudent() {
-
     hide("adminScreen");
     hide("examScreen");
     hide("resultScreen");
@@ -212,8 +166,7 @@ function loadStudent() {
             item => item.name === currentUser
         );
 
-    $("attemptCount").textContent =
-        history.length;
+    $("attemptCount").textContent = history.length;
 
     $("bestScore").textContent =
         history.length
@@ -221,39 +174,31 @@ function loadStudent() {
             : "—";
 }
 
+function renderExams() {
+    const examList = $("examList");
 
-/* =========================
-   EXAM LIST
-========================= */
-examList.innerHTML += `
-    <div class="exam-card">
-        <h3>${exam.title}</h3>
-        <p>Duration: ${exam.duration} minutes</p>
-        <button onclick="deleteExam(${exam.id})">Delete</button>
-    </div>
-`;
+    if (!examList) return;
 
-         
-          
+    examList.innerHTML = exams.map(exam => `
+        <div class="exam-card">
+            <h3>${exam.title}</h3>
+            <p>${exam.questions.length} Questions</p>
+            <p>Duration: ${exam.duration} minutes</p>
 
-                   
-                        
-                    
-
-                   
-                       
-
-
-/* =========================
-   START EXAM
-========================= */
+            <button onclick="startExam(${exam.id})">
+                Start Exam
+            </button>
+        </div>
+    `).join("");
+}
 
 function startExam(id) {
-
     currentExam =
         exams.find(
             exam => exam.id === id
         );
+
+    if (!currentExam) return;
 
     currentIndex = 0;
 
@@ -278,36 +223,24 @@ function startExam(id) {
     renderQuestion();
 }
 
-
-/* =========================
-   TIMER
-========================= */
-
 function startTimer() {
-
     clearInterval(timerId);
 
     updateTimer();
 
     timerId = setInterval(() => {
-
         remaining--;
 
         updateTimer();
 
         if (remaining <= 0) {
-
             clearInterval(timerId);
-
             finishExam();
         }
-
     }, 1000);
 }
 
-
 function updateTimer() {
-
     const minutes =
         Math.floor(remaining / 60);
 
@@ -318,13 +251,7 @@ function updateTimer() {
         `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 }
 
-
-/* =========================
-   DISPLAY QUESTION
-========================= */
-
 function renderQuestion() {
-
     const question =
         currentExam.questions[currentIndex];
 
@@ -334,10 +261,8 @@ function renderQuestion() {
     $("questionText").textContent =
         question.q;
 
-
     $("options").innerHTML =
         question.o.map((option, index) => {
-
             return `
                 <label class="option">
 
@@ -354,33 +279,25 @@ function renderQuestion() {
 
                 </label>
             `;
-
         }).join("");
-
 
     $("options")
         .querySelectorAll("input")
         .forEach(radio => {
-
             radio.onchange = () => {
-
                 answers[currentIndex] =
                     Number(radio.value);
             };
-
         });
-
 
     $("prevBtn").disabled =
         currentIndex === 0;
-
 
     $("nextBtn").classList.toggle(
         "hidden",
         currentIndex ===
         currentExam.questions.length - 1
     );
-
 
     $("submitBtn").classList.toggle(
         "hidden",
@@ -389,80 +306,46 @@ function renderQuestion() {
     );
 }
 
-
-/* =========================
-   PREVIOUS
-========================= */
-
 $("prevBtn").onclick = () => {
-
     if (currentIndex > 0) {
-
         currentIndex--;
-
         renderQuestion();
     }
 };
 
-
-/* =========================
-   NEXT
-========================= */
-
 $("nextBtn").onclick = () => {
-
     if (
         currentIndex <
         currentExam.questions.length - 1
     ) {
-
         currentIndex++;
-
         renderQuestion();
     }
 };
 
-
-/* =========================
-   SUBMIT
-========================= */
-
 $("submitBtn").onclick = () => {
-
     if (
         confirm(
             "Are you sure you want to submit the exam?"
         )
     ) {
-
         finishExam();
     }
 };
 
-
-/* =========================
-   FINISH EXAM
-========================= */
-
 function finishExam() {
-
     clearInterval(timerId);
 
     let correct = 0;
 
-
     answers.forEach((answer, index) => {
-
         if (
             answer ===
             currentExam.questions[index].a
         ) {
-
             correct++;
         }
-
     });
-
 
     const score =
         Math.round(
@@ -471,77 +354,47 @@ function finishExam() {
             100
         );
 
-
     const history =
         JSON.parse(
             localStorage.getItem("examHistory") || "[]"
         );
 
-
     history.push({
-
         name: currentUser,
-
         exam: currentExam.title,
-
         score: score,
-
-        date:
-            new Date().toLocaleString()
-
+        date: new Date().toLocaleString()
     });
-
 
     localStorage.setItem(
         "examHistory",
         JSON.stringify(history)
     );
 
-
     hide("examScreen");
 
     show("resultScreen");
 
-
     $("resultTitle").textContent =
         currentExam.title;
 
-
     $("scoreValue").textContent =
         `${score}%`;
-
 
     $("resultMessage").textContent =
         `You answered ${correct} out of ${currentExam.questions.length} questions correctly.`;
 }
 
-
-/* =========================
-   BACK TO EXAMS
-========================= */
-
 $("backToExams").onclick = () => {
-
     loadStudent();
 };
 
-
-/* =========================
-   ADMIN DASHBOARD
-========================= */
-
 function loadAdmin() {
-
     hide("studentScreen");
     hide("examScreen");
     hide("resultScreen");
 
     show("adminScreen");
-
-
-    /* =========================
-       GET EXAM STATISTICS
-    ========================= */
 
     const totalExams = exams.length;
 
@@ -551,16 +404,13 @@ function loadAdmin() {
         0
     );
 
-
     const history =
         JSON.parse(
             localStorage.getItem("examHistory") || "[]"
         );
 
-
     const totalAttempts =
         history.length;
-
 
     const averageScore =
         totalAttempts > 0
@@ -572,11 +422,6 @@ function loadAdmin() {
                 ) / totalAttempts
             )
             : 0;
-
-
-    /* =========================
-       DASHBOARD HEADER
-    ========================= */
 
     $("adminScreen").innerHTML = `
 
@@ -602,9 +447,6 @@ function loadAdmin() {
 
         </div>
 
-
-        <!-- STATISTICS -->
-
         <div class="stats"
              style="
                 display:grid;
@@ -626,7 +468,6 @@ function loadAdmin() {
 
             </div>
 
-
             <div class="card"
                  style="margin:0;text-align:center;">
 
@@ -640,7 +481,6 @@ function loadAdmin() {
 
             </div>
 
-
             <div class="card"
                  style="margin:0;text-align:center;">
 
@@ -653,7 +493,6 @@ function loadAdmin() {
                 </span>
 
             </div>
-
 
             <div class="card"
                  style="margin:0;text-align:center;">
@@ -669,9 +508,6 @@ function loadAdmin() {
             </div>
 
         </div>
-
-
-        <!-- EXAM MANAGEMENT -->
 
         <div class="card">
 
@@ -713,6 +549,19 @@ function loadAdmin() {
 
                         </button>
 
+                        <button
+                            onclick="deleteExam(${exam.id})"
+                            style="
+                                background:#ff3333;
+                                color:white;
+                                border:none;
+                                margin-top:10px;
+                            ">
+
+                            Delete Exam
+
+                        </button>
+
                     </div>
 
                 `).join("")}
@@ -720,9 +569,6 @@ function loadAdmin() {
             </div>
 
         </div>
-
-
-        <!-- STUDENT RESULTS -->
 
         <div class="card">
 
@@ -737,43 +583,65 @@ function loadAdmin() {
                     ? history
                         .slice(-10)
                         .reverse()
-                        .map(item => `
+                        .map((item, index) => {
 
-                            <div
-                                class="exam"
-                                style="
-                                    margin-bottom:10px;
-                                "
-                            >
+                            const resultIndex =
+                                history.length - 1 - index;
 
-                                <strong>
-                                    ${item.name}
-                                </strong>
+                            return `
 
-                                <p>
-                                    ${item.exam}
-                                </p>
+                                <div
+                                    class="exam"
+                                    style="
+                                        margin-bottom:10px;
+                                    "
+                                >
 
-                                <p>
-                                    Score:
-                                    <strong
+                                    <strong>
+                                        ${item.name}
+                                    </strong>
+
+                                    <p>
+                                        ${item.exam}
+                                    </p>
+
+                                    <p>
+                                        Score:
+                                        <strong
+                                            style="
+                                                color:#00ff66;
+                                                text-shadow:
+                                                0 0 8px #00ff66;
+                                            "
+                                        >
+                                            ${item.score}%
+                                        </strong>
+                                    </p>
+
+                                    <small>
+                                        ${item.date}
+                                    </small>
+
+                                    <br><br>
+
+                                    <button
+                                        onclick="deleteResult(${resultIndex})"
                                         style="
-                                            color:#00ff66;
-                                            text-shadow:
-                                            0 0 8px #00ff66;
+                                            background:#ff3333;
+                                            color:white;
+                                            border:none;
+                                            padding:8px 14px;
+                                            border-radius:6px;
+                                            cursor:pointer;
                                         "
                                     >
-                                        ${item.score}%
-                                    </strong>
-                                </p>
+                                        Delete Result
+                                    </button>
 
-                                <small>
-                                    ${item.date}
-                                </small>
+                                </div>
 
-                            </div>
-
-                        `)
+                            `;
+                        })
                         .join("")
 
                     : `
@@ -787,24 +655,16 @@ function loadAdmin() {
 
     `;
 }
-<button onclick="deleteResult(${index})">Delete</button>
-
-/* =========================
-   VIEW EXAM QUESTIONS
-========================= */
 
 function adminViewExam(id) {
-
     const exam =
         exams.find(
             item => item.id === id
         );
 
-
     if (!exam) {
         return;
     }
-
 
     $("adminScreen").innerHTML = `
 
@@ -824,7 +684,6 @@ function adminViewExam(id) {
                 ${exam.duration}
                 Minutes
             </p>
-
 
             ${exam.questions.map(
                 (question, index) => `
@@ -865,7 +724,6 @@ function adminViewExam(id) {
                 `
             ).join("")}
 
-
             <button
                 onclick="loadAdmin()"
                 class="secondary"
@@ -877,23 +735,60 @@ function adminViewExam(id) {
 
     `;
 }
+
 function deleteExam(id) {
-    if (!confirm("Are you sure you want to delete this exam?")) return;
+    const exam =
+        exams.find(
+            item => item.id === id
+        );
 
-    exams = exams.filter(exam => exam.id !== id);
-    localStorage.setItem("exams", JSON.stringify(exams));
+    if (!exam) return;
 
-    renderExams();
+    if (
+        !confirm(
+            `Are you sure you want to delete "${exam.title}"?`
+        )
+    ) {
+        return;
+    }
+
+    exams =
+        exams.filter(
+            exam => exam.id !== id
+        );
+
+    loadAdmin();
 }
+
 function deleteResult(index) {
-    if (!confirm("Are you sure you want to delete this result?")) return;
+    if (
+        !confirm(
+            "Are you sure you want to delete this student result?"
+        )
+    ) {
+        return;
+    }
 
-    let results = JSON.parse(localStorage.getItem("results")) || [];
-    results.splice(index, 1);
+    const history =
+        JSON.parse(
+            localStorage.getItem("examHistory") || "[]"
+        );
 
-    localStorage.setItem("results", JSON.stringify(results));
+    if (
+        index < 0 ||
+        index >= history.length
+    ) {
+        return;
+    }
 
-    renderResults();
+    history.splice(index, 1);
+
+    localStorage.setItem(
+        "examHistory",
+        JSON.stringify(history)
+    );
+
+    loadAdmin();
 }
   
                 
