@@ -849,4 +849,83 @@ function adminViewExam(id) {
 
                         </div>
                     `
-                ).join("          
+                ).join("     
+function adminViewExam(id) {
+    const exam =
+        exams.find(
+            item => item.id === id
+        );
+
+    if (!exam) return;
+
+    $("adminScreen").innerHTML = `
+
+        <div class="card">
+
+            <span class="badge">
+                EXAM DETAILS
+            </span>
+
+            <h2 style="margin-top:15px;">
+                ${exam.title}
+            </h2>
+
+            <p style="margin:10px 0 25px;">
+                ${exam.questions.length}
+                Questions •
+                ${exam.duration}
+                Minutes
+            </p>
+
+            ${
+                exam.questions.map(
+                    (question, index) => `
+                        <div
+                            class="exam"
+                            style="margin-bottom:15px;"
+                        >
+
+                            <h4>
+                                Q${index + 1}.
+                                ${question.q}
+                            </h4>
+
+                            <p>
+                                Options:
+                            </p>
+
+                            <ol
+                                style="
+                                    padding-left:25px;
+                                    color:#cccccc;
+                                "
+                            >
+
+                                ${
+                                    question.o.map(
+                                        option => `
+                                            <li>
+                                                ${option}
+                                            </li>
+                                        `
+                                    ).join("")
+                                }
+
+                            </ol>
+
+                        </div>
+                    `
+                ).join("")
+            }
+
+            <button
+                onclick="loadAdmin()"
+                class="secondary"
+            >
+                ← Back to Dashboard
+            </button>
+
+        </div>
+
+    `;
+}     
