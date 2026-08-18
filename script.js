@@ -288,34 +288,51 @@ function logout() {
     }
 }
 
-function loadStudentDashboard() {
-    const container = document.getElementById("examList");
+function loadStudentDashboard();
+loadStudentExamPage();
+loadStudentResults(); {
+   function loadStudentResults() {
+    const table = document.getElementById("studentResultsTable");
 
-    if (!container) return;
+    if (!table) return;
 
-    const activeExams = exams.filter(exam => exam.active);
+    const results =
+        JSON.parse(localStorage.getItem("results")) || [];
 
-    container.innerHTML = "";
+    const userResults = results.filter(
+        result => result.user === currentUser.name
+    );
 
-    activeExams.forEach(exam => {
-        const card = document.createElement("div");
+    table.innerHTML = "";
 
-        card.className = "exam-card";
+    if (userResults.length === 0) {
+        table.innerHTML = `
+            <tr>
+                <td colspan="5">No results available.</td>
+            </tr>
+        `;
+        return;
+    }
 
-        card.innerHTML = `
-            <h3>${exam.title}</h3>
-            <p>Test your knowledge with this online examination.</p>
-            <div class="exam-meta">
-                <span>⏱ ${exam.duration} min</span>
-                <span>❓ ${exam.questions.length} Questions</span>
-            </div>
-            <button class="btn btn-primary" onclick="startExam(${exam.id})">
-                Start Exam
-            </button>
+    userResults.forEach(result => {
+        const percentage =
+            Math.round(
+                (result.score / result.total) * 100
+            );
+
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+            <td>${result.exam}</td>
+            <td>${result.score}</td>
+            <td>${result.total}</td>
+            <td>${percentage}%</td>
+            <td>${result.date}</td>
         `;
 
-        container.appendChild(card);
+        table.appendChild(row);
     });
+}
 
     updateStudentStats();
 }
@@ -477,3 +494,38 @@ function previousQuestion() {
 }
 
 function
+function loadStudentExamPage() {
+    const container = document.getElementById("examListPage");
+
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    exams
+        .filter(exam => exam.active)
+        .forEach(exam => {
+            const card = document.createElement("div");
+
+            card.className = "exam-card";
+
+            card.innerHTML = `
+                <h3>${exam.title}</h3>
+                <p>Complete this examination within the given time.</p>
+
+                <div class="exam-meta">
+                    <span>⏱ ${exam.duration} min</span>
+                    <span>❓ ${exam.questions.length} Questions</span>
+                </div>
+
+                <button class="btn btn-primary">
+                    Start Exam
+                </button>
+            `;
+
+            card.querySelector("button").addEventListener("click", () => {
+                startExam(exam.id);
+            });
+
+            container.appendChild(card);
+        });
+}
