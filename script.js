@@ -552,82 +552,358 @@ function loadAdmin() {
     show("adminScreen");
 
 
+    /* =========================
+       GET EXAM STATISTICS
+    ========================= */
+
+    const totalExams = exams.length;
+
+    const totalQuestions = exams.reduce(
+        (total, exam) =>
+            total + exam.questions.length,
+        0
+    );
+
+
     const history =
         JSON.parse(
             localStorage.getItem("examHistory") || "[]"
         );
 
 
-    $("adminExamList").innerHTML =
-
-        exams.map(exam => {
-
-            return `
-                <div
-                    class="exam"
-                    style="margin-bottom:12px">
-
-                    <h4>
-                        ${exam.title}
-                    </h4>
-
-                    <p>
-                        ${exam.questions.length}
-                        Questions •
-                        ${exam.duration}
-                        Minutes
-                    </p>
-
-                </div>
-            `;
-
-        }).join("");
+    const totalAttempts =
+        history.length;
 
 
-    $("adminExamList").innerHTML += `
+    const averageScore =
+        totalAttempts > 0
+            ? Math.round(
+                history.reduce(
+                    (total, item) =>
+                        total + item.score,
+                    0
+                ) / totalAttempts
+            )
+            : 0;
 
-        <h3 style="margin-top:25px;">
-            Recent Attempts:
-            ${history.length}
-        </h3>
+
+    /* =========================
+       DASHBOARD HEADER
+    ========================= */
+
+    $("adminScreen").innerHTML = `
+
+        <div class="hero card">
+
+            <div>
+
+                <span class="badge">
+                    ADMIN PANEL
+                </span>
+
+                <h2>
+                    Examination Dashboard
+                </h2>
+
+                <p>
+                    Welcome, ${currentUser}.
+                    Manage examinations and monitor
+                    student performance.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- STATISTICS -->
+
+        <div class="stats"
+             style="
+                display:grid;
+                grid-template-columns:
+                repeat(auto-fit,minmax(180px,1fr));
+                margin-bottom:25px;
+             ">
+
+            <div class="card"
+                 style="margin:0;text-align:center;">
+
+                <strong>
+                    ${totalExams}
+                </strong>
+
+                <span>
+                    Total Exams
+                </span>
+
+            </div>
+
+
+            <div class="card"
+                 style="margin:0;text-align:center;">
+
+                <strong>
+                    ${totalQuestions}
+                </strong>
+
+                <span>
+                    Total Questions
+                </span>
+
+            </div>
+
+
+            <div class="card"
+                 style="margin:0;text-align:center;">
+
+                <strong>
+                    ${totalAttempts}
+                </strong>
+
+                <span>
+                    Total Attempts
+                </span>
+
+            </div>
+
+
+            <div class="card"
+                 style="margin:0;text-align:center;">
+
+                <strong>
+                    ${averageScore}%
+                </strong>
+
+                <span>
+                    Average Score
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- EXAM MANAGEMENT -->
+
+        <div class="card">
+
+            <h3>
+                Examination Management
+            </h3>
+
+            <br>
+
+            <div class="exam-grid">
+
+                ${exams.map(exam => `
+
+                    <div class="exam">
+
+                        <span class="badge">
+                            ACTIVE
+                        </span>
+
+                        <h4>
+                            ${exam.title}
+                        </h4>
+
+                        <p>
+                            ${exam.questions.length}
+                            Questions
+                        </p>
+
+                        <p>
+                            Duration:
+                            ${exam.duration}
+                            Minutes
+                        </p>
+
+                        <button
+                            onclick="adminViewExam(${exam.id})">
+
+                            View Questions
+
+                        </button>
+
+                    </div>
+
+                `).join("")}
+
+            </div>
+
+        </div>
+
+
+        <!-- STUDENT RESULTS -->
+
+        <div class="card">
+
+            <h3>
+                Recent Student Results
+            </h3>
+
+            <br>
+
+            ${
+                history.length
+                    ? history
+                        .slice(-10)
+                        .reverse()
+                        .map(item => `
+
+                            <div
+                                class="exam"
+                                style="
+                                    margin-bottom:10px;
+                                "
+                            >
+
+                                <strong>
+                                    ${item.name}
+                                </strong>
+
+                                <p>
+                                    ${item.exam}
+                                </p>
+
+                                <p>
+                                    Score:
+                                    <strong
+                                        style="
+                                            color:#00ff66;
+                                            text-shadow:
+                                            0 0 8px #00ff66;
+                                        "
+                                    >
+                                        ${item.score}%
+                                    </strong>
+                                </p>
+
+                                <small>
+                                    ${item.date}
+                                </small>
+
+                            </div>
+
+                        `)
+                        .join("")
+
+                    : `
+                        <p>
+                            No student attempts yet.
+                        </p>
+                    `
+            }
+
+        </div>
 
     `;
-
-
-    if (history.length) {
-
-        $("adminExamList").innerHTML +=
-
-            history
-                .slice(-10)
-                .reverse()
-                .map(item => {
-
-                    return `
-                        <p style="margin-top:10px;">
-
-                            ${item.name}
-                            —
-                            ${item.exam}
-                            —
-                            <strong>
-                                ${item.score}%
-                            </strong>
-                            —
-                            ${item.date}
-
-                        </p>
-                    `;
-
-                })
-                .join("");
-
-    } else {
-
-        $("adminExamList").innerHTML += `
-            <p style="margin-top:10px;">
-                No attempts yet.
-            </p>
-        `;
-    }
 }
+
+
+/* =========================
+   VIEW EXAM QUESTIONS
+========================= */
+
+function adminViewExam(id) {
+
+    const exam =
+        exams.find(
+            item => item.id === id
+        );
+
+
+    if (!exam) {
+        return;
+    }
+
+
+    $("adminScreen").innerHTML = `
+
+        <div class="card">
+
+            <span class="badge">
+                EXAM DETAILS
+            </span>
+
+            <h2 style="margin-top:15px;">
+                ${exam.title}
+            </h2>
+
+            <p style="margin:10px 0 25px;">
+                ${exam.questions.length}
+                Questions •
+                ${exam.duration}
+                Minutes
+            </p>
+
+
+            ${exam.questions.map(
+                (question, index) => `
+
+                    <div
+                        class="exam"
+                        style="margin-bottom:15px;"
+                    >
+
+                        <h4>
+                            Q${index + 1}.
+                            ${question.q}
+                        </h4>
+
+                        <p>
+                            Options:
+                        </p>
+
+                        <ol
+                            style="
+                                padding-left:25px;
+                                color:#cccccc;
+                            "
+                        >
+
+                            ${question.o.map(
+                                option => `
+                                    <li>
+                                        ${option}
+                                    </li>
+                                `
+                            ).join("")}
+
+                        </ol>
+
+                    </div>
+
+                `
+            ).join("")}
+
+
+            <button
+                onclick="loadAdmin()"
+                class="secondary"
+            >
+                ← Back to Dashboard
+            </button>
+
+        </div>
+
+    `;
+}
+
+
+  
+                
+                
+
+               
+                  
+       
+                      
+                   
+               
+                          
+                           
+                           
+                           
+                 
