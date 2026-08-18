@@ -107,16 +107,31 @@ let defaultExams = [
 
 let exams;
 
-if (localStorage.getItem("exams") === null) {
+const savedExams = localStorage.getItem("exams");
+
+if (savedExams) {
+    try {
+        exams = JSON.parse(savedExams);
+
+        if (!Array.isArray(exams) || exams.length === 0) {
+            exams = defaultExams;
+            localStorage.setItem(
+                "exams",
+                JSON.stringify(exams)
+            );
+        }
+    } catch (error) {
+        exams = defaultExams;
+        localStorage.setItem(
+            "exams",
+            JSON.stringify(exams)
+        );
+    }
+} else {
+    exams = defaultExams;
     localStorage.setItem(
         "exams",
-        JSON.stringify(defaultExams)
-    );
-
-    exams = defaultExams;
-} else {
-    exams = JSON.parse(
-        localStorage.getItem("exams")
+        JSON.stringify(exams)
     );
 }
 
