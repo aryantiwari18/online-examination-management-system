@@ -1,18 +1,3 @@
-
-  
-                
-                
-
-               
-                  
-       
-                      
-                   
-               
-                          
-                           
-                           
-                           
        let defaultExams = [
     {
         id: 1,
