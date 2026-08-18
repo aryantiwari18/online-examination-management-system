@@ -1,7 +1,4 @@
-// ===============================
-// ONLINE EXAMINATION SYSTEM
-// Dynamic Exam + Question Management
-// ===============================
+
 
 let exams = JSON.parse(localStorage.getItem("exams")) || [
     {
@@ -49,9 +46,7 @@ let timer;
 let timeLeft;
 
 
-// ===============================
-// STORAGE
-// ===============================
+
 
 function saveData() {
     localStorage.setItem("exams", JSON.stringify(exams));
@@ -60,9 +55,7 @@ function saveData() {
 }
 
 
-// ===============================
-// LOGIN
-// ===============================
+
 
 function login() {
 
@@ -97,10 +90,6 @@ function login() {
 }
 
 
-// ===============================
-// LOGOUT
-// ===============================
-
 function logout() {
 
     clearInterval(timer);
@@ -109,9 +98,7 @@ function logout() {
 }
 
 
-// ===============================
-// ADMIN EXAM MANAGEMENT
-// ===============================
+
 
 function addExam() {
 
@@ -156,9 +143,7 @@ function addExam() {
 }
 
 
-// ===============================
-// EDIT EXAM
-// ===============================
+
 
 function editExam(id) {
 
@@ -191,9 +176,7 @@ function editExam(id) {
 }
 
 
-// ===============================
-// ACTIVATE / DEACTIVATE EXAM
-// ===============================
+
 
 function toggleExam(id) {
 
@@ -210,9 +193,6 @@ function toggleExam(id) {
 }
 
 
-// ===============================
-// DELETE EXAM
-// ===============================
 
 function deleteExam(id) {
 
@@ -241,9 +221,7 @@ function deleteExam(id) {
 }
 
 
-// ===============================
-// DISPLAY ADMIN EXAMS
-// ===============================
+
 
 function renderAdminExams() {
 
@@ -321,9 +299,6 @@ function renderAdminExams() {
 }
 
 
-// ===============================
-// QUESTION MANAGEMENT
-// ===============================
 
 function addQuestion() {
 
@@ -395,9 +370,6 @@ function addQuestion() {
 }
 
 
-// ===============================
-// EDIT QUESTION
-// ===============================
 
 function editQuestion(id) {
 
@@ -465,9 +437,7 @@ function editQuestion(id) {
 }
 
 
-// ===============================
-// DELETE QUESTION
-// ===============================
+
 
 function deleteQuestion(id) {
 
@@ -487,9 +457,7 @@ function deleteQuestion(id) {
 }
 
 
-// ===============================
-// EXAM FILTER FOR QUESTIONS
-// ===============================
+
 
 function renderQuestionExamList() {
 
@@ -513,9 +481,7 @@ function renderQuestionExamList() {
 }
 
 
-// ===============================
-// DISPLAY QUESTIONS
-// ===============================
+
 
 function renderAdminQuestions() {
 
@@ -585,9 +551,6 @@ function renderAdminQuestions() {
 }
 
 
-// ===============================
-// CLEAR QUESTION FORM
-// ===============================
 
 function clearQuestionForm() {
 
@@ -617,9 +580,6 @@ function clearQuestionForm() {
 }
 
 
-// ===============================
-// ADMIN STATISTICS
-// ===============================
 
 function renderAdminStats() {
 
@@ -657,9 +617,6 @@ function renderAdminStats() {
 }
 
 
-// ===============================
-// STUDENT EXAM LIST
-// ===============================
 
 function renderStudentExams() {
 
@@ -713,9 +670,7 @@ function renderStudentExams() {
 }
 
 
-// ===============================
-// START EXAM
-// ===============================
+
 
 function startExam(id) {
 
@@ -763,10 +718,6 @@ function startExam(id) {
     startTimer();
 }
 
-
-// ===============================
-// DISPLAY QUESTION
-// ===============================
 
 function displayQuestion() {
 
@@ -830,9 +781,7 @@ function displayQuestion() {
 }
 
 
-// ===============================
-// SELECT ANSWER
-// ===============================
+
 
 function selectAnswer(index) {
 
@@ -842,9 +791,6 @@ function selectAnswer(index) {
 }
 
 
-// ===============================
-// NEXT QUESTION
-// ===============================
 
 function nextQuestion() {
 
@@ -865,9 +811,6 @@ function nextQuestion() {
 }
 
 
-// ===============================
-// PREVIOUS QUESTION
-// ===============================
 
 function previousQuestion() {
 
@@ -880,9 +823,7 @@ function previousQuestion() {
 }
 
 
-// ===============================
-// TIMER
-// ===============================
+
 
 function startTimer() {
 
@@ -926,9 +867,7 @@ function updateTimer() {
 }
 
 
-// ===============================
-// SUBMIT EXAM
-// ===============================
+
 
 function submitExam(auto = false) {
 
@@ -999,11 +938,6 @@ function submitExam(auto = false) {
     currentExam = null;
 }
 
-
-// ===============================
-// QUESTION FILTER CHANGE
-// ===============================
-
 document.addEventListener(
     "change",
     function(event) {
@@ -1018,13 +952,6 @@ document.addEventListener(
 
     }
 );
-
-
-// ===============================
-// INITIAL SAVE
-// ===============================
-
-saveData();
 function renderStudentHistory() {
 
     const history =
@@ -1080,3 +1007,16 @@ function renderStudentHistory() {
 
         });
 }
+function showStudentDashboard() {
+
+    document.getElementById("resultPage").style.display = "none";
+
+    document.getElementById("studentPage").style.display = "block";
+
+    renderStudentExams();
+    renderStudentHistory();
+}
+
+saveData();
+                       
+                   
