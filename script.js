@@ -885,7 +885,16 @@ function deleteExam(id) {
 
     renderExams();
 }
+function deleteResult(index) {
+    if (!confirm("Are you sure you want to delete this result?")) return;
 
+    let results = JSON.parse(localStorage.getItem("results")) || [];
+    results.splice(index, 1);
+
+    localStorage.setItem("results", JSON.stringify(results));
+
+    renderResults();
+}
   
                 
                 
