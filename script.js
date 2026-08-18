@@ -1025,3 +1025,58 @@ document.addEventListener(
 // ===============================
 
 saveData();
+function renderStudentHistory() {
+
+    const history =
+        document.getElementById("historyList");
+
+    if (!history) return;
+
+    const studentAttempts =
+        attempts.filter(
+            a => a.student === currentUser
+        );
+
+    if (studentAttempts.length === 0) {
+
+        history.innerHTML =
+            "<p class='muted'>No attempts yet.</p>";
+
+        return;
+    }
+
+    history.innerHTML = "";
+
+    studentAttempts
+        .slice()
+        .reverse()
+        .forEach(attempt => {
+
+            history.innerHTML += `
+
+                <div class="question-admin">
+
+                    <h4>
+                        ${attempt.exam}
+                    </h4>
+
+                    <p>
+                        Score:
+                        ${attempt.score}/${attempt.total}
+                    </p>
+
+                    <p>
+                        Percentage:
+                        ${attempt.percentage}%
+                    </p>
+
+                    <p class="muted">
+                        ${attempt.date}
+                    </p>
+
+                </div>
+
+            `;
+
+        });
+}
