@@ -1,0 +1,668 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #000000;
+    color: #ffffff;
+    min-height: 100vh;
+}
+
+/* =========================
+   TOP BAR
+========================= */
+
+.topbar {
+    padding: 20px 7%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background: #000000;
+    border-bottom: 1px solid #0066ff;
+
+    box-shadow:
+        0 0 10px #0066ff,
+        0 0 25px #0066ff55;
+}
+
+.topbar h1 {
+    color: #ffffff;
+    font-size: 26px;
+
+    text-shadow:
+        0 0 8px #0066ff,
+        0 0 18px #0066ff;
+}
+
+.topbar p {
+    margin-top: 5px;
+    color: #00ff66;
+}
+
+/* =========================
+   MAIN
+========================= */
+
+main {
+    width: min(1050px, 92%);
+    margin: 40px auto;
+}
+
+/* =========================
+   CARDS
+========================= */
+
+.card {
+    background: #050505;
+
+    border: 1px solid #0066ff;
+    border-radius: 18px;
+
+    padding: 25px;
+    margin-bottom: 25px;
+
+    box-shadow:
+        0 0 8px #0066ff66,
+        inset 0 0 15px #0066ff15;
+
+    transition: 0.3s ease;
+}
+
+.card:hover {
+    box-shadow:
+        0 0 15px #0066ff,
+        0 0 35px #0066ff55,
+        inset 0 0 20px #0066ff20;
+
+    transform: translateY(-2px);
+}
+
+/* =========================
+   LOGIN
+========================= */
+
+.login-card {
+    max-width: 430px;
+    margin: 80px auto;
+    text-align: center;
+
+    border-color: #00ff66;
+
+    box-shadow:
+        0 0 12px #00ff66,
+        0 0 35px #00ff6644;
+}
+
+.login-card h2 {
+    color: #ffffff;
+
+    text-shadow:
+        0 0 8px #00ff66,
+        0 0 18px #00ff66;
+}
+
+.login-card p {
+    color: #00ff66;
+    margin: 10px 0 20px;
+}
+
+.login-card input,
+.login-card select {
+
+    display: block;
+
+    width: 100%;
+
+    margin: 12px 0;
+
+    padding: 14px;
+
+    border-radius: 10px;
+
+    border: 1px solid #0066ff;
+
+    background: #000000;
+
+    color: #ffffff;
+
+    outline: none;
+
+    transition: 0.3s;
+}
+
+.login-card input:focus,
+.login-card select:focus {
+
+    border-color: #00ff66;
+
+    box-shadow:
+        0 0 8px #00ff66,
+        0 0 20px #00ff6644;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+button {
+
+    border: none;
+
+    border-radius: 10px;
+
+    padding: 13px 20px;
+
+    background: #0066ff;
+
+    color: #ffffff;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.3s ease;
+
+    box-shadow:
+        0 0 8px #0066ff,
+        0 0 18px #0066ff55;
+}
+
+button:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 0 12px #0066ff,
+        0 0 30px #0066ff;
+}
+
+.login-card button {
+
+    width: 100%;
+
+    background: #00cc55;
+
+    box-shadow:
+        0 0 10px #00ff66,
+        0 0 25px #00ff6655;
+}
+
+.login-card button:hover {
+
+    background: #00ff66;
+
+    color: #000000;
+
+    box-shadow:
+        0 0 15px #00ff66,
+        0 0 35px #00ff66;
+}
+
+/* =========================
+   RED BUTTON
+========================= */
+
+.danger {
+
+    background: #ff0033;
+
+    box-shadow:
+        0 0 10px #ff0033,
+        0 0 25px #ff003355;
+}
+
+.danger:hover {
+
+    background: #ff1744;
+
+    box-shadow:
+        0 0 15px #ff0033,
+        0 0 35px #ff0033;
+}
+
+/* =========================
+   SECONDARY BLUE
+========================= */
+
+.secondary {
+
+    background: #003cff;
+
+    box-shadow:
+        0 0 8px #0066ff,
+        0 0 20px #0066ff55;
+}
+
+/* =========================
+   BADGE
+========================= */
+
+.badge {
+
+    display: inline-block;
+
+    background: #000000;
+
+    color: #00ff66;
+
+    border: 1px solid #00ff66;
+
+    border-radius: 30px;
+
+    padding: 6px 12px;
+
+    font-size: 11px;
+
+    font-weight: bold;
+
+    letter-spacing: 1px;
+
+    box-shadow:
+        0 0 8px #00ff66,
+        0 0 15px #00ff6644;
+}
+
+/* =========================
+   HERO
+========================= */
+
+.hero {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    align-items: center;
+}
+
+.hero h2 {
+
+    margin: 10px 0 5px;
+
+    color: #ffffff;
+
+    text-shadow:
+        0 0 8px #0066ff;
+}
+
+.hero p {
+
+    color: #cccccc;
+}
+
+/* =========================
+   STATS
+========================= */
+
+.stats {
+
+    display: flex;
+
+    gap: 14px;
+}
+
+.stats div {
+
+    min-width: 100px;
+
+    padding: 15px;
+
+    text-align: center;
+
+    background: #000000;
+
+    border: 1px solid #0066ff;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 0 8px #0066ff66;
+}
+
+.stats strong {
+
+    display: block;
+
+    font-size: 25px;
+
+    color: #00ff66;
+
+    text-shadow:
+        0 0 8px #00ff66;
+}
+
+.stats span {
+
+    display: block;
+
+    font-size: 12px;
+
+    color: #ffffff;
+}
+
+/* =========================
+   EXAM GRID
+========================= */
+
+.exam-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(230px, 1fr));
+
+    gap: 15px;
+}
+
+.exam {
+
+    background: #000000;
+
+    padding: 18px;
+
+    border-radius: 14px;
+
+    border: 1px solid #0066ff;
+
+    transition: 0.3s;
+}
+
+.exam:hover {
+
+    border-color: #00ff66;
+
+    transform: translateY(-5px);
+
+    box-shadow:
+        0 0 12px #00ff66,
+        0 0 25px #00ff6644;
+}
+
+.exam h4 {
+
+    margin-bottom: 8px;
+
+    color: #ffffff;
+
+    text-shadow:
+        0 0 5px #0066ff;
+}
+
+.exam p {
+
+    color: #aaaaaa;
+
+    margin-bottom: 15px;
+}
+
+.exam button {
+
+    width: 100%;
+
+    background: #0066ff;
+}
+
+/* =========================
+   EXAM HEADER
+========================= */
+
+.exam-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+}
+
+.exam-header h2 {
+
+    color: #ffffff;
+
+    text-shadow:
+        0 0 8px #0066ff;
+}
+
+/* =========================
+   TIMER
+========================= */
+
+.timer {
+
+    font-size: 30px;
+
+    font-weight: bold;
+
+    color: #00ff66;
+
+    background: #000000;
+
+    padding: 14px 22px;
+
+    border-radius: 12px;
+
+    border: 1px solid #00ff66;
+
+    box-shadow:
+        0 0 10px #00ff66,
+        0 0 25px #00ff6644;
+
+    animation: timerGlow 1.5s infinite alternate;
+}
+
+@keyframes timerGlow {
+
+    from {
+        box-shadow:
+            0 0 8px #00ff66;
+    }
+
+    to {
+        box-shadow:
+            0 0 20px #00ff66,
+            0 0 35px #00ff6655;
+    }
+}
+
+/* =========================
+   QUESTIONS
+========================= */
+
+.question-card h2 {
+
+    line-height: 1.5;
+
+    margin-bottom: 20px;
+
+    color: #ffffff;
+}
+
+.option {
+
+    display: block;
+
+    padding: 16px;
+
+    margin: 10px 0;
+
+    background: #000000;
+
+    border: 1px solid #333333;
+
+    border-radius: 12px;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+}
+
+.option:hover {
+
+    border-color: #0066ff;
+
+    box-shadow:
+        0 0 10px #0066ff55;
+}
+
+.option input {
+
+    margin-right: 10px;
+
+    accent-color: #00ff66;
+}
+
+/* =========================
+   ACTIONS
+========================= */
+
+.actions {
+
+    display: flex;
+
+    gap: 10px;
+
+    justify-content: flex-end;
+
+    margin-top: 25px;
+
+    flex-wrap: wrap;
+}
+
+/* =========================
+   RESULT
+========================= */
+
+.result-card {
+
+    text-align: center;
+
+    max-width: 600px;
+
+    margin: 60px auto;
+
+    border-color: #00ff66;
+
+    box-shadow:
+        0 0 15px #00ff66,
+        0 0 35px #00ff6644;
+}
+
+.result-card h2 {
+
+    margin-top: 15px;
+
+    color: #ffffff;
+}
+
+.score {
+
+    font-size: 65px;
+
+    font-weight: bold;
+
+    margin: 25px;
+
+    color: #00ff66;
+
+    text-shadow:
+        0 0 10px #00ff66,
+        0 0 25px #00ff66,
+        0 0 45px #00ff6655;
+}
+
+.result-card p {
+
+    color: #cccccc;
+
+    margin-bottom: 20px;
+}
+
+/* =========================
+   ADMIN
+========================= */
+
+#adminScreen .hero {
+
+    border-color: #ff0033;
+
+    box-shadow:
+        0 0 12px #ff0033,
+        0 0 30px #ff003344;
+}
+
+#adminScreen .badge {
+
+    color: #ff0033;
+
+    border-color: #ff0033;
+
+    box-shadow:
+        0 0 8px #ff0033;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+footer {
+
+    text-align: center;
+
+    padding: 25px;
+
+    color: #ffffff;
+
+    border-top: 1px solid #0066ff;
+
+    box-shadow:
+        0 0 10px #0066ff55;
+
+    font-size: 13px;
+}
+
+/* =========================
+   HIDDEN
+========================= */
+
+.hidden {
+
+    display: none !important;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 650px) {
+
+    .hero,
+    .exam-header {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+
+    .stats {
+
+        width: 100%;
+    }
+
+    .stats div {
+
+        flex: 1;
+    }
+
+    .timer {
+
+        align-self: stretch;
+
+        text-align: center;
+    }
+}
