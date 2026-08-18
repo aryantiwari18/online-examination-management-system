@@ -1,3 +1,4 @@
+alert("SCRIPT LOADED");
 let defaultExams = [
     {
         id: 1,
