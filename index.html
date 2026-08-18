@@ -1,215 +1,454 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Online Examination Management System</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Online Examination Management System</title>
+
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-  <header class="topbar">
-    <div>
-      <h1>Online Examination System</h1>
-      <p>SEPM Project</p>
+<!-- ============================= -->
+<!-- HEADER -->
+<!-- ============================= -->
+
+<header class="topbar">
+
+    <div class="brand">
+        <span class="brand-dot"></span>
+        ONLINE EXAMINATION SYSTEM
     </div>
 
-    <button id="logoutBtn" class="danger hidden">
-      Logout
-    </button>
-  </header>
+    <div id="headerUser"></div>
 
-  <main>
-
-    <!-- Login Screen -->
-    <section id="loginScreen" class="card login-card">
-
-      <h2>Welcome</h2>
-      <p>Login to continue</p>
-
-      <input
-        id="nameInput"
-        type="text"
-        placeholder="Enter your name"
-      >
-
-      <select id="roleInput">
-        <option value="student">Student</option>
-        <option value="admin">Admin</option>
-      </select>
-
-      <button id="loginBtn">
-        Login
-      </button>
-
-      <small>
-        Demo project — no password required.
-      </small>
-
-    </section>
+</header>
 
 
-    <!-- Student Dashboard -->
-    <section id="studentScreen" class="hidden">
+<!-- ============================= -->
+<!-- MAIN CONTAINER -->
+<!-- ============================= -->
 
-      <div class="hero card">
+<main class="container">
 
-        <div>
-          <span class="badge">STUDENT</span>
 
-          <h2 id="studentWelcome"></h2>
+<!-- ============================= -->
+<!-- LOGIN PAGE -->
+<!-- ============================= -->
 
-          <p>
-            Select an examination and test your knowledge.
-          </p>
+<section id="loginPage" class="page active">
+
+    <div class="glass login-card glow">
+
+        <div class="logo-ring">
+            EXAM
         </div>
 
-        <div class="stats">
+        <h1>
+            Online Examination
+        </h1>
 
-          <div>
-            <strong id="attemptCount">0</strong>
-            <span>Attempts</span>
-          </div>
+        <p class="muted">
+            Secure • Timed • Automatic Evaluation
+        </p>
 
-          <div>
-            <strong id="bestScore">—</strong>
-            <span>Best Score</span>
-          </div>
+        <input
+            type="text"
+            id="loginName"
+            placeholder="Enter your name"
+        >
 
-        </div>
+        <select id="loginRole">
 
-      </div>
+            <option value="student">
+                Student
+            </option>
 
+            <option value="admin">
+                Admin
+            </option>
 
-      <div class="card">
+        </select>
 
-        <h3>Available Examinations</h3>
+        <button
+            class="green"
+            onclick="login()">
 
-        <div id="examList" class="exam-grid"></div>
+            LOGIN
 
-      </div>
-
-    </section>
-
-
-    <!-- Examination Screen -->
-    <section id="examScreen" class="hidden">
-
-      <div class="exam-header card">
-
-        <div>
-
-          <span class="badge">
-            EXAMINATION
-          </span>
-
-          <h2 id="examTitle"></h2>
-
-          <p id="questionProgress"></p>
-
-        </div>
-
-        <div class="timer" id="timer">
-          05:00
-        </div>
-
-      </div>
-
-
-      <div class="card question-card">
-
-        <h2 id="questionText"></h2>
-
-        <div id="options"></div>
-
-
-        <div class="actions">
-
-          <button id="prevBtn" class="secondary">
-            Previous
-          </button>
-
-          <button id="nextBtn">
-            Next
-          </button>
-
-          <button id="submitBtn" class="danger hidden">
-            Submit Exam
-          </button>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- Result Screen -->
-    <section id="resultScreen" class="hidden">
-
-      <div class="card result-card">
-
-        <span class="badge">
-          RESULT
-        </span>
-
-        <h2 id="resultTitle"></h2>
-
-        <div class="score" id="scoreValue"></div>
-
-        <p id="resultMessage"></p>
-
-        <button id="backToExams">
-          Back to Examinations
         </button>
 
-      </div>
+        <p id="loginError" class="error"></p>
 
-    </section>
+    </div>
+
+</section>
 
 
-    <!-- Admin Dashboard -->
-    <section id="adminScreen" class="hidden">
 
-      <div class="hero card">
+<!-- ============================= -->
+<!-- ADMIN DASHBOARD -->
+<!-- ============================= -->
+
+<section
+    id="adminPage"
+    class="page"
+    style="display:none;"
+>
+
+    <div class="page-head">
 
         <div>
 
-          <span class="badge">
-            ADMIN
-          </span>
+            <h2>
+                Admin Dashboard
+            </h2>
 
-          <h2>Admin Dashboard</h2>
-
-          <p>
-            Manage examinations and monitor project data.
-          </p>
+            <p class="muted">
+                Manage examinations and questions
+            </p>
 
         </div>
 
-      </div>
+        <button
+            class="red"
+            onclick="logout()">
+
+            LOGOUT
+
+        </button>
+
+    </div>
 
 
-      <div class="card">
+    <!-- ADMIN STATISTICS -->
 
-        <h3>Examination Management</h3>
+    <div id="adminStats"></div>
+
+
+    <!-- ========================= -->
+    <!-- EXAM MANAGEMENT -->
+    <!-- ========================= -->
+
+    <div class="admin-section">
+
+        <h2>
+            📚 Exam Management
+        </h2>
+
+        <input
+            type="text"
+            id="examTitle"
+            placeholder="Enter exam title"
+        >
+
+        <input
+            type="number"
+            id="examDuration"
+            placeholder="Duration in minutes"
+        >
+
+        <button
+            class="green"
+            onclick="addExam()">
+
+            + CREATE EXAM
+
+        </button>
+
 
         <div id="adminExamList"></div>
 
-      </div>
-
-    </section>
-
-  </main>
+    </div>
 
 
-  <footer>
-    Online Examination Management System • SEPM
-  </footer>
+
+    <!-- ========================= -->
+    <!-- QUESTION MANAGEMENT -->
+    <!-- ========================= -->
+
+    <div class="admin-section">
+
+        <h2>
+            ❓ Question Management
+        </h2>
 
 
-  <script src="script.js"></script>
+        <!-- SELECT EXAM -->
+
+        <select id="questionExam">
+
+            <option>
+                Select Exam
+            </option>
+
+        </select>
+
+
+        <!-- QUESTION -->
+
+        <input
+            type="text"
+            id="questionText"
+            placeholder="Enter question"
+        >
+
+
+        <!-- OPTIONS -->
+
+        <input
+            type="text"
+            id="optionA"
+            placeholder="Option A"
+        >
+
+        <input
+            type="text"
+            id="optionB"
+            placeholder="Option B"
+        >
+
+        <input
+            type="text"
+            id="optionC"
+            placeholder="Option C"
+        >
+
+        <input
+            type="text"
+            id="optionD"
+            placeholder="Option D"
+        >
+
+
+        <!-- CORRECT ANSWER -->
+
+        <select id="correctAnswer">
+
+            <option value="0">
+                Correct Answer: A
+            </option>
+
+            <option value="1">
+                Correct Answer: B
+            </option>
+
+            <option value="2">
+                Correct Answer: C
+            </option>
+
+            <option value="3">
+                Correct Answer: D
+            </option>
+
+        </select>
+
+
+        <button
+            class="green"
+            onclick="addQuestion()">
+
+            + ADD QUESTION
+
+        </button>
+
+
+        <div id="adminQuestionList"></div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ============================= -->
+<!-- STUDENT DASHBOARD -->
+<!-- ============================= -->
+
+<section
+    id="studentPage"
+    class="page"
+    style="display:none;"
+>
+
+    <div class="page-head">
+
+        <div>
+
+            <h2>
+                Student Dashboard
+            </h2>
+
+            <p class="muted">
+                Select an active examination
+            </p>
+
+        </div>
+
+        <button
+            class="red"
+            onclick="logout()">
+
+            LOGOUT
+
+        </button>
+
+    </div>
+
+
+    <div id="examList"></div>
+
+
+    <div class="admin-section">
+
+        <h2>
+            📊 Attempt History
+        </h2>
+
+        <div id="historyList"></div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ============================= -->
+<!-- EXAM PAGE -->
+<!-- ============================= -->
+
+<section
+    id="examPage"
+    class="page"
+    style="display:none;"
+>
+
+    <div class="page-head">
+
+        <div>
+
+            <h2>
+                Examination
+            </h2>
+
+            <p
+                id="questionNumber"
+                class="muted">
+            </p>
+
+        </div>
+
+
+        <div
+            id="timer"
+            class="timer">
+
+            30:00
+
+        </div>
+
+    </div>
+
+
+    <!-- QUESTION -->
+
+    <div class="glass question-card">
+
+        <h2 id="questionText">
+        </h2>
+
+
+        <div id="options">
+        </div>
+
+
+        <div class="question-actions">
+
+            <button
+                class="blue"
+                onclick="previousQuestion()">
+
+                ← PREVIOUS
+
+            </button>
+
+
+            <button
+                class="blue"
+                onclick="nextQuestion()">
+
+                NEXT →
+
+            </button>
+
+
+            <button
+                class="red"
+                onclick="submitExam()">
+
+                SUBMIT EXAM
+
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ============================= -->
+<!-- RESULT PAGE -->
+<!-- ============================= -->
+
+<section
+    id="resultPage"
+    class="page"
+    style="display:none;"
+>
+
+    <div class="glass result-card glow">
+
+        <div class="result-icon">
+            ✓
+        </div>
+
+        <h2>
+            Exam Completed
+        </h2>
+
+        <h1
+            id="resultScore">
+        </h1>
+
+        <p id="resultDetails">
+        </p>
+
+        <button
+            class="green"
+            onclick="showStudentDashboard()">
+
+            BACK TO DASHBOARD
+
+        </button>
+
+    </div>
+
+</section>
+
+
+</main>
+
+
+
+<!-- ============================= -->
+<!-- JAVASCRIPT -->
+<!-- ============================= -->
+
+<script src="script.js"></script>
 
 </body>
 </html>
