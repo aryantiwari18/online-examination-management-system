@@ -787,7 +787,7 @@ function loadAdmin() {
 
     `;
 }
-
+<button onclick="deleteResult(${index})">Delete</button>
 
 /* =========================
    VIEW EXAM QUESTIONS
