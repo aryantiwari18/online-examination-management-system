@@ -108,25 +108,37 @@ let defaultExams = [
 let exams = [];
 
 function loadExams() {
+    const saved = localStorage.getItem("exams");
+
+    if (!saved) {
+        exams = JSON.parse(
+            JSON.stringify(defaultExams)
+        );
+
+        localStorage.setItem(
+            "exams",
+            JSON.stringify(exams)
+        );
+
+        return;
+    }
+
     try {
-        const saved = localStorage.getItem("exams");
+        const parsed = JSON.parse(saved);
 
-        if (saved) {
-            const parsed = JSON.parse(saved);
+        if (!Array.isArray(parsed) || parsed.length === 0) {
+            exams = JSON.parse(
+                JSON.stringify(defaultExams)
+            );
 
-            if (Array.isArray(parsed)) {
-                exams = parsed;
-            }
+            localStorage.setItem(
+                "exams",
+                JSON.stringify(exams)
+            );
+        } else {
+            exams = parsed;
         }
     } catch (error) {
-        exams = [];
-    }
-
-    if (!Array.isArray(exams)) {
-        exams = [];
-    }
-
-    if (exams.length === 0) {
         exams = JSON.parse(
             JSON.stringify(defaultExams)
         );
