@@ -235,50 +235,63 @@ function loadStudent() {
 }
 
 function renderExams() {
-const examList = $("examList");
+    const examList = document.getElementById("examList");
 
     if (!examList) {
         return;
     }
 
-    if (!exams.length) {
+    examList.innerHTML = "";
+
+    if (!Array.isArray(exams) || exams.length === 0) {
         examList.innerHTML = `
-            <p>
-                No examinations are currently available.
-            </p>
+            <div class="exam">
+                <h4>No examinations available</h4>
+                <p>Please contact the administrator.</p>
+            </div>
         `;
         return;
     }
 
-    examList.innerHTML =
-        exams.map(exam => `
-            <div class="exam">
+    exams.forEach(function (exam) {
 
-                <span class="badge">
-                    AVAILABLE
-                </span>
+        const card = document.createElement("div");
 
-                <h4>
-                    ${exam.title}
-                </h4>
+        card.className = "exam";
 
-                <p>
-                    ${exam.questions.length} Questions
-                </p>
+        card.innerHTML = `
+            <span class="badge">
+                AVAILABLE
+            </span>
 
-                <p>
-                    Duration:
-                    ${exam.duration} Minutes
-                </p>
+            <h4>
+                ${exam.title}
+            </h4>
 
-                <button
-                    onclick="startExam(${exam.id})"
-                >
-                    Start Exam
-                </button>
+            <p>
+                ${exam.questions.length} Questions
+            </p>
 
-            </div>
-        `).join("");
+            <p>
+                Duration:
+                ${exam.duration} Minutes
+            </p>
+
+            <button
+                type="button"
+                class="start-exam-btn"
+            >
+                Start Exam
+            </button>
+        `;
+
+        card.querySelector(".start-exam-btn").onclick =
+            function () {
+                startExam(exam.id);
+            };
+
+        examList.appendChild(card);
+    });
 }
 
 function startExam(id) {
