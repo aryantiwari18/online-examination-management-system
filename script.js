@@ -106,52 +106,6 @@ let defaultExams = [
 ];
 
 let exams = [];
-
-function loadExams() {
-    let saved = localStorage.getItem("exams");
-
-    if (!saved) {
-        exams = JSON.parse(JSON.stringify(defaultExams));
-        localStorage.setItem("exams", JSON.stringify(exams));
-        return;
-    }
-
-    try {
-        exams = JSON.parse(saved);
-
-        if (!Array.isArray(exams) || exams.length === 0) {
-            exams = JSON.parse(JSON.stringify(defaultExams));
-            localStorage.setItem("exams", JSON.stringify(exams));
-        }
-    } catch (error) {
-        exams = JSON.parse(JSON.stringify(defaultExams));
-        localStorage.setItem("exams", JSON.stringify(exams));
-    }
-}
-
-loadExams();
-
-            localStorage.setItem(
-                "exams",
-                JSON.stringify(exams)
-            );
-        } else {
-            exams = parsed;
-        }
-    } catch (error) {
-        exams = JSON.parse(
-            JSON.stringify(defaultExams)
-        );
-
-        localStorage.setItem(
-            "exams",
-            JSON.stringify(exams)
-        );
-    }
-}
-
-loadExams();
-
 let currentUser = "";
 let currentExam = null;
 let currentIndex = 0;
@@ -177,6 +131,51 @@ function hide(id) {
     }
 }
 
+function initializeExams() {
+    const saved = localStorage.getItem("exams");
+    const initialized = localStorage.getItem("examSystemInitialized");
+
+    if (!saved || !initialized) {
+        exams = JSON.parse(JSON.stringify(defaultExams));
+
+        localStorage.setItem(
+            "exams",
+            JSON.stringify(exams)
+        );
+
+        localStorage.setItem(
+            "examSystemInitialized",
+            "true"
+        );
+
+        return;
+    }
+
+    try {
+        const parsed = JSON.parse(saved);
+
+        if (!Array.isArray(parsed)) {
+            exams = JSON.parse(JSON.stringify(defaultExams));
+
+            localStorage.setItem(
+                "exams",
+                JSON.stringify(exams)
+            );
+        } else {
+            exams = parsed;
+        }
+    } catch (error) {
+        exams = JSON.parse(JSON.stringify(defaultExams));
+
+        localStorage.setItem(
+            "exams",
+            JSON.stringify(exams)
+        );
+    }
+}
+
+initializeExams();
+
 $("loginBtn").onclick = function () {
     const name = $("nameInput").value.trim();
 
@@ -190,9 +189,7 @@ $("loginBtn").onclick = function () {
     hide("loginScreen");
     show("logoutBtn");
 
-    const role = $("roleInput").value;
-
-    if (role === "admin") {
+    if ($("roleInput").value === "admin") {
         loadAdmin();
     } else {
         loadStudent();
@@ -212,30 +209,26 @@ function loadStudent() {
     show("studentScreen");
 
     $("studentWelcome").textContent =
-        `Hello, ${currentUser}!`;
+        "Hello, " + currentUser + "!";
 
     renderExams();
 
-    const history =
-        JSON.parse(
-            localStorage.getItem("examHistory") || "[]"
-        ).filter(
-            item => item.name === currentUser
-        );
+    const history = JSON.parse(
+        localStorage.getItem("examHistory") || "[]"
+    ).filter(item => item.name === currentUser);
 
-    $("attemptCount").textContent =
-        history.length;
+    $("attemptCount").textContent = history.length;
 
-    $("bestScore").textContent =
-        history.length
-            ? Math.max(
-                ...history.map(item => item.score)
-            ) + "%"
-            : "—";
+    if (history.length > 0) {
+        $("bestScore").textContent =
+            Math.max(...history.map(item => item.score)) + "%";
+    } else {
+        $("bestScore").textContent = "—";
+    }
 }
 
 function renderExams() {
-    const examList = document.getElementById("examList");
+    const examList = $("examList");
 
     if (!examList) {
         return;
@@ -250,11 +243,11 @@ function renderExams() {
                 <p>Please contact the administrator.</p>
             </div>
         `;
+
         return;
     }
 
     exams.forEach(function (exam) {
-
         const card = document.createElement("div");
 
         card.className = "exam";
@@ -279,44 +272,51 @@ function renderExams() {
 
             <button
                 type="button"
-                class="start-exam-btn"
+                class="startExamButton"
             >
                 Start Exam
             </button>
         `;
 
-        card.querySelector(".start-exam-btn").onclick =
-            function () {
-                startExam(exam.id);
-            };
+        card.querySelector(
+            ".startExamButton"
+        ).onclick = function () {
+            startExam(exam.id);
+        };
 
         examList.appendChild(card);
     });
 }
 
 function startExam(id) {
-    currentExam =
-        exams.find(
-            exam => exam.id === id
-        );
+    currentExam = exams.find(
+        exam => Number(exam.id) === Number(id)
+    );
 
     if (!currentExam) {
         alert("Exam not found.");
         return;
     }
 
+    if (
+        !currentExam.questions ||
+        currentExam.questions.length === 0
+    ) {
+        alert("This examination has no questions.");
+        return;
+    }
+
     currentIndex = 0;
 
-    answers =
-        new Array(
-            currentExam.questions.length
-        ).fill(null);
+    answers = new Array(
+        currentExam.questions.length
+    ).fill(null);
 
-    remaining =
-        currentExam.duration * 60;
+    remaining = currentExam.duration * 60;
 
     hide("studentScreen");
     hide("resultScreen");
+    hide("adminScreen");
 
     show("examScreen");
 
@@ -345,14 +345,16 @@ function startTimer() {
 }
 
 function updateTimer() {
-    const minutes =
-        Math.floor(remaining / 60);
+    const minutes = Math.floor(
+        remaining / 60
+    );
 
-    const seconds =
-        remaining % 60;
+    const seconds = remaining % 60;
 
     $("timer").textContent =
-        `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+        String(minutes).padStart(2, "0") +
+        ":" +
+        String(seconds).padStart(2, "0");
 }
 
 function renderQuestion() {
@@ -364,14 +366,17 @@ function renderQuestion() {
         currentExam.questions[currentIndex];
 
     $("questionProgress").textContent =
-        `Question ${currentIndex + 1} of ${currentExam.questions.length}`;
+        "Question " +
+        (currentIndex + 1) +
+        " of " +
+        currentExam.questions.length;
 
     $("questionText").textContent =
         question.q;
 
     $("options").innerHTML =
-        question.o.map(
-            (option, index) => `
+        question.o.map(function (option, index) {
+            return `
                 <label class="option">
 
                     <input
@@ -386,34 +391,31 @@ function renderQuestion() {
                     ${option}
 
                 </label>
-            `
-        ).join("");
+            `;
+        }).join("");
 
     $("options")
         .querySelectorAll("input")
-        .forEach(
-            radio => {
-                radio.onchange = function () {
-                    answers[currentIndex] =
-                        Number(radio.value);
-                };
-            }
-        );
+        .forEach(function (radio) {
+            radio.onchange = function () {
+                answers[currentIndex] =
+                    Number(radio.value);
+            };
+        });
 
     $("prevBtn").disabled =
         currentIndex === 0;
 
-    $("nextBtn").classList.toggle(
-        "hidden",
+    if (
         currentIndex ===
         currentExam.questions.length - 1
-    );
-
-    $("submitBtn").classList.toggle(
-        "hidden",
-        currentIndex !==
-        currentExam.questions.length - 1
-    );
+    ) {
+        hide("nextBtn");
+        show("submitBtn");
+    } else {
+        show("nextBtn");
+        hide("submitBtn");
+    }
 }
 
 $("prevBtn").onclick = function () {
@@ -425,8 +427,9 @@ $("prevBtn").onclick = function () {
 
 $("nextBtn").onclick = function () {
     if (
+        currentExam &&
         currentIndex <
-        currentExam.questions.length - 1
+            currentExam.questions.length - 1
     ) {
         currentIndex++;
         renderQuestion();
@@ -452,28 +455,24 @@ function finishExam() {
 
     let correct = 0;
 
-    answers.forEach(
-        (answer, index) => {
-            if (
-                answer ===
-                currentExam.questions[index].a
-            ) {
-                correct++;
-            }
+    answers.forEach(function (answer, index) {
+        if (
+            answer ===
+            currentExam.questions[index].a
+        ) {
+            correct++;
         }
+    });
+
+    const score = Math.round(
+        correct /
+        currentExam.questions.length *
+        100
     );
 
-    const score =
-        Math.round(
-            correct /
-            currentExam.questions.length *
-            100
-        );
-
-    const history =
-        JSON.parse(
-            localStorage.getItem("examHistory") || "[]"
-        );
+    const history = JSON.parse(
+        localStorage.getItem("examHistory") || "[]"
+    );
 
     history.push({
         name: currentUser,
@@ -494,10 +493,14 @@ function finishExam() {
         currentExam.title;
 
     $("scoreValue").textContent =
-        `${score}%`;
+        score + "%";
 
     $("resultMessage").textContent =
-        `You answered ${correct} out of ${currentExam.questions.length} questions correctly.`;
+        "You answered " +
+        correct +
+        " out of " +
+        currentExam.questions.length +
+        " questions correctly.";
 }
 
 $("backToExams").onclick = function () {
@@ -511,30 +514,31 @@ function loadAdmin() {
 
     show("adminScreen");
 
-    const history =
-        JSON.parse(
-            localStorage.getItem("examHistory") || "[]"
-        );
+    const history = JSON.parse(
+        localStorage.getItem("examHistory") || "[]"
+    );
 
-    const totalExams =
-        exams.length;
+    const totalExams = exams.length;
 
-    const totalQuestions =
-        exams.reduce(
-            (total, exam) =>
-                total + exam.questions.length,
-            0
-        );
+    const totalQuestions = exams.reduce(
+        function (total, exam) {
+            return total +
+                (exam.questions
+                    ? exam.questions.length
+                    : 0);
+        },
+        0
+    );
 
-    const totalAttempts =
-        history.length;
+    const totalAttempts = history.length;
 
     const averageScore =
-        totalAttempts
+        totalAttempts > 0
             ? Math.round(
                 history.reduce(
-                    (total, item) =>
-                        total + item.score,
+                    function (total, item) {
+                        return total + item.score;
+                    },
                     0
                 ) / totalAttempts
             )
@@ -557,7 +561,7 @@ function loadAdmin() {
                 <p>
                     Welcome, ${currentUser}.
                     Manage examinations and monitor
-                    student performance.
+                    project data.
                 </p>
 
             </div>
@@ -643,9 +647,9 @@ function loadAdmin() {
             >
 
                 ${
-exams.length
-                        ? exams.map(
-                            exam => `
+                    exams.length > 0
+                        ? exams.map(function (exam) {
+                            return `
                                 <div class="exam">
 
                                     <span class="badge">
@@ -686,12 +690,18 @@ exams.length
                                     </button>
 
                                 </div>
-                            `
-                        ).join("")
+                            `;
+                        }).join("")
                         : `
-                            <p>
-                                No examinations available.
-                            </p>
+                            <div class="exam">
+                                <h4>
+                                    No examinations available
+                                </h4>
+
+                                <p>
+                                    All examinations have been deleted.
+                                </p>
+                            </div>
                         `
                 }
 
@@ -708,73 +718,69 @@ exams.length
             <br>
 
             ${
-                history.length
+                history.length > 0
                     ? history
                         .slice(-10)
                         .reverse()
-                        .map(
-                            (item, index) => {
+                        .map(function (item, index) {
 
-                                const actualIndex =
-                                    history.length -
-                                    1 -
-                                    index;
+                            const actualIndex =
+                                history.length -
+                                1 -
+                                index;
 
-                                return `
-                                    <div
-                                        class="exam"
-                                        style="
-                                            margin-bottom:12px;
-                                        "
-                                    >
+                            return `
+                                <div
+                                    class="exam"
+                                    style="
+                                        margin-bottom:12px;
+                                    "
+                                >
 
-                                        <strong>
-                                            ${item.name}
-                                        </strong>
+                                    <strong>
+                                        ${item.name}
+                                    </strong>
 
-                                        <p>
-                                            ${item.exam}
-                                        </p>
+                                    <p>
+                                        ${item.exam}
+                                    </p>
 
-                                        <p>
-                                            Score:
-
-                                            <strong
-                                                style="
-                                                    color:#00ff66;
-                                                    text-shadow:
-                                                    0 0 8px #00ff66;
-                                                "
-                                            >
-                                                ${item.score}%
-                                            </strong>
-
-                                        </p>
-
-                                        <small>
-                                            ${item.date}
-                                        </small>
-
-                                        <br><br>
-
-                                        <button
-                                            onclick="deleteResult(${actualIndex})"
+                                    <p>
+                                        Score:
+                                        <strong
                                             style="
-                                                background:#ff3333;
-                                                color:white;
-                                                border:none;
-                                                padding:8px 14px;
-                                                border-radius:6px;
-                                                cursor:pointer;
+                                                color:#00ff66;
+                                                text-shadow:
+                                                0 0 8px #00ff66;
                                             "
                                         >
-                                            Delete Result
-                                        </button>
+                                            ${item.score}%
+                                        </strong>
+                                    </p>
 
-                                    </div>
-                                `;
-                            }
-                        )
+                                    <small>
+                                        ${item.date}
+                                    </small>
+
+                                    <br><br>
+
+                                    <button
+                                        onclick="deleteResult(${actualIndex})"
+                                        style="
+                                            background:#ff3333;
+                                            color:white;
+                                            border:none;
+                                            padding:8px 14px;
+                                            border-radius:6px;
+                                            cursor:pointer;
+                                        "
+                                    >
+                                        Delete Result
+                                    </button>
+
+                                </div>
+                            `;
+                        })
                         .join("")
                     : `
                         <p>
@@ -788,27 +794,27 @@ exams.length
 }
 
 function deleteExam(id) {
-    const exam =
-        exams.find(
-            item => item.id === id
-        );
+    const exam = exams.find(
+        item => Number(item.id) === Number(id)
+    );
 
     if (!exam) {
         return;
     }
 
-    if (
-        !confirm(
-            `Are you sure you want to delete "${exam.title}"?`
-        )
-    ) {
+    const confirmed = confirm(
+        'Are you sure you want to delete "' +
+        exam.title +
+        '"?'
+    );
+
+    if (!confirmed) {
         return;
     }
 
-    exams =
-        exams.filter(
-            item => item.id !== id
-        );
+    exams = exams.filter(
+        item => Number(item.id) !== Number(id)
+    );
 
     localStorage.setItem(
         "exams",
@@ -819,18 +825,17 @@ function deleteExam(id) {
 }
 
 function deleteResult(index) {
-    if (
-        !confirm(
-            "Are you sure you want to delete this student result?"
-        )
-    ) {
+    const confirmed = confirm(
+"Are you sure you want to delete this student result?"
+    );
+
+    if (!confirmed) {
         return;
     }
 
-    const history =
-        JSON.parse(
-            localStorage.getItem("examHistory") || "[]"
-        );
+    const history = JSON.parse(
+        localStorage.getItem("examHistory") || "[]"
+    );
 
     if (
         index < 0 ||
@@ -850,12 +855,12 @@ function deleteResult(index) {
 }
 
 function adminViewExam(id) {
-    const exam =
-        exams.find(
-            item => item.id === id
-        );
+    const exam = exams.find(
+        item => Number(item.id) === Number(id)
+    );
 
     if (!exam) {
+        alert("Exam not found.");
         return;
     }
 
@@ -880,42 +885,46 @@ function adminViewExam(id) {
 
             ${
                 exam.questions.map(
-                    (question, index) => `
-                        <div
-                            class="exam"
-                            style="margin-bottom:15px;"
-                        >
-
-                            <h4>
-                                Q${index + 1}.
-                                ${question.q}
-                            </h4>
-
-                            <p>
-                                Options:
-                            </p>
-
-                            <ol
-                                style="
-                                    padding-left:25px;
-                                    color:#cccccc;
-                                "
+                    function (question, index) {
+                        return `
+                            <div
+                                class="exam"
+                                style="margin-bottom:15px;"
                             >
 
-                                ${
-                                    question.o.map(
-                                        option => `
-                                            <li>
-                                                ${option}
-                                            </li>
-                                        `
-                                    ).join("")
-                                }
+                                <h4>
+                                    Q${index + 1}.
+                                    ${question.q}
+                                </h4>
 
-                            </ol>
+                                <p>
+                                    Options:
+                                </p>
 
-                        </div>
-                    `
+                                <ol
+                                    style="
+                                        padding-left:25px;
+                                        color:#cccccc;
+                                    "
+                                >
+
+                                    ${
+                                        question.o.map(
+                                            function (option) {
+                                                return `
+                                                    <li>
+                                                        ${option}
+                                                    </li>
+                                                `;
+                                            }
+                                        ).join("")
+                                    }
+
+                                </ol>
+
+                            </div>
+                        `;
+                    }
                 ).join("")
             }
 
