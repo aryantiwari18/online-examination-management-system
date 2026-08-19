@@ -108,28 +108,28 @@ let defaultExams = [
 let exams = [];
 
 function loadExams() {
-    const saved = localStorage.getItem("exams");
+    let saved = localStorage.getItem("exams");
 
     if (!saved) {
-        exams = JSON.parse(
-            JSON.stringify(defaultExams)
-        );
-
-        localStorage.setItem(
-            "exams",
-            JSON.stringify(exams)
-        );
-
+        exams = JSON.parse(JSON.stringify(defaultExams));
+        localStorage.setItem("exams", JSON.stringify(exams));
         return;
     }
 
     try {
-        const parsed = JSON.parse(saved);
+        exams = JSON.parse(saved);
 
-        if (!Array.isArray(parsed) || parsed.length === 0) {
-            exams = JSON.parse(
-                JSON.stringify(defaultExams)
-            );
+        if (!Array.isArray(exams) || exams.length === 0) {
+            exams = JSON.parse(JSON.stringify(defaultExams));
+            localStorage.setItem("exams", JSON.stringify(exams));
+        }
+    } catch (error) {
+        exams = JSON.parse(JSON.stringify(defaultExams));
+        localStorage.setItem("exams", JSON.stringify(exams));
+    }
+}
+
+loadExams();
 
             localStorage.setItem(
                 "exams",
