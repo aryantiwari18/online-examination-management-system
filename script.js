@@ -1274,3 +1274,171 @@ function saveNewQuestion(examId) {
 
     manageQuestions(exam.id);
 }
+function editQuestion(examId, questionIndex) {
+    const exam = exams.find(
+        item => Number(item.id) === Number(examId)
+    );
+
+    if (!exam || !exam.questions[questionIndex]) {
+        alert("Question not found.");
+        return;
+    }
+
+    const question = exam.questions[questionIndex];
+
+    $("adminScreen").innerHTML = `
+        <div class="card">
+
+            <span class="badge">
+                EDIT QUESTION
+            </span>
+
+            <h2 style="margin-top:15px;">
+                ${exam.title}
+            </h2>
+
+            <p style="margin-bottom:25px;">
+                Edit question ${questionIndex + 1}.
+            </p>
+
+            <input
+                id="editQuestion"
+                type="text"
+                value="${question.q.replace(/"/g, "&quot;")}"
+                placeholder="Enter question"
+                style="
+                    width:100%;
+                    padding:14px;
+                    margin-bottom:12px;
+                    background:#0f172a;
+                    color:white;
+                    border:1px solid #334155;
+                    border-radius:8px;
+                "
+            >
+
+            ${question.o.map((option, index) => `
+                <input
+                    id="editOption${index}"
+                    type="text"
+                    value="${option.replace(/"/g, "&quot;")}"
+                    placeholder="Option ${String.fromCharCode(65 + index)}"
+                    style="
+                        width:100%;
+                        padding:14px;
+                        margin-bottom:12px;
+                        background:#0f172a;
+                        color:white;
+                        border:1px solid #334155;
+                        border-radius:8px;
+                    "
+                >
+            `).join("")}
+
+            <label
+                style="
+                    display:block;
+                    margin-bottom:8px;
+                    color:#94a3b8;
+                "
+            >
+                Correct Answer
+            </label>
+
+            <select
+                id="editCorrectAnswer"
+                style="
+                    width:100%;
+                    padding:14px;
+                    margin-bottom:20px;
+                    background:#0f172a;
+                    color:white;
+                    border:1px solid #334155;
+                    border-radius:8px;
+                "
+            >
+
+                <option value="0" ${question.a === 0 ? "selected" : ""}>
+                    Option A
+                </option>
+
+                <option value="1" ${question.a === 1 ? "selected" : ""}>
+                    Option B
+                </option>
+
+                <option value="2" ${question.a === 2 ? "selected" : ""}>
+                    Option C
+                </option>
+
+                <option value="3" ${question.a === 3 ? "selected" : ""}>
+                    Option D
+                </option>
+
+            </select>
+
+            <button
+                onclick="saveEditedQuestion(${exam.id}, ${questionIndex})"
+            >
+                Save Changes
+            </button>
+
+            <button
+                onclick="manageQuestions(${exam.id})"
+                class="secondary"
+                style="margin-left:8px;"
+            >
+                Cancel
+            </button>
+
+        </div>
+    `;
+}
+function saveEditedQuestion(examId, questionIndex) {
+    const exam = exams.find(
+        item => Number(item.id) === Number(examId)
+    );
+
+    if (!exam || !exam.questions[questionIndex]) {
+        alert("Question not found.");
+        return;
+    }
+
+    const question =
+        $("editQuestion").value.trim();
+
+    const options = [
+        $("editOption0").value.trim(),
+        $("editOption1").value.trim(),
+        $("editOption2").value.trim(),
+        $("editOption3").value.trim()
+    ];
+
+    const correctAnswer =
+        Number($("editCorrectAnswer").value);
+
+    if (
+        !question ||
+        options.some(option => !option)
+    ) {
+        alert(
+            "Please fill in all question and option fields."
+        );
+
+        return;
+    }
+
+    exam.questions[questionIndex] = {
+        q: question,
+        o: options,
+        a: correctAnswer
+    };
+
+    localStorage.setItem(
+        "exams",
+        JSON.stringify(exams)
+    );
+
+    alert("Question updated successfully.");
+
+    manageQuestions(exam.id);
+}
