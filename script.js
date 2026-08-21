@@ -1442,3 +1442,32 @@ function saveEditedQuestion(examId, questionIndex) {
 
     manageQuestions(exam.id);
 }
+function deleteQuestion(examId, questionIndex) {
+    const exam = exams.find(
+        item => Number(item.id) === Number(examId)
+    );
+
+    if (!exam || !exam.questions[questionIndex]) {
+        alert("Question not found.");
+        return;
+    }
+
+    const confirmed = confirm(
+        "Are you sure you want to delete this question?"
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    exam.questions.splice(questionIndex, 1);
+
+    localStorage.setItem(
+        "exams",
+        JSON.stringify(exams)
+    );
+
+    alert("Question deleted successfully.");
+
+    manageQuestions(exam.id);
+}
