@@ -676,6 +676,11 @@ function loadAdmin() {
                                     >
                                         View Questions
                                     </button>
+<button
+    onclick="manageQuestions(${exam.id})"
+>
+    Manage Questions
+</button>
 
                                     <button
                                         onclick="deleteExam(${exam.id})"
@@ -937,4 +942,335 @@ function adminViewExam(id) {
 
         </div>
     `;
+}
+function manageQuestions(id) {
+    const exam = exams.find(
+        item => Number(item.id) === Number(id)
+    );
+
+    if (!exam) {
+        alert("Exam not found.");
+        return;
+    }
+
+    $("adminScreen").innerHTML = `
+        <div class="card">
+
+            <span class="badge">
+                QUESTION MANAGEMENT
+            </span>
+
+            <h2 style="margin-top:15px;">
+                ${exam.title}
+            </h2>
+
+            <p style="margin:10px 0 25px;">
+                Manage questions for this examination.
+            </p>
+
+            <button
+                onclick="addQuestion(${exam.id})"
+            >
+                + Add Question
+            </button>
+
+            <button
+                onclick="loadAdmin()"
+                class="secondary"
+                style="margin-left:8px;"
+            >
+                ← Back
+            </button>
+
+            <div style="margin-top:25px;">
+
+                ${
+                    exam.questions.length
+                        ? exam.questions.map(
+                            (question, index) => `
+                                <div
+                                    class="exam"
+                                    style="margin-bottom:15px;"
+                                >
+
+                                    <h4>
+                                        Q${index + 1}.
+                                        ${question.q}
+                                    </h4>
+
+                                    <p>
+                                        A. ${question.o[0]}
+                                    </p>
+
+                                    <p>
+                                        B. ${question.o[1]}
+                                    </p>
+
+                                    <p>
+                                        C. ${question.o[2]}
+                                    </p>
+
+                                    <p>
+                                        D. ${question.o[3]}
+                                    </p>
+
+                                    <p>
+                                        Correct Answer:
+                                        <strong>
+                                            ${String.fromCharCode(
+                                                65 + question.a
+                                            )}
+                                        </strong>
+                                    </p>
+
+                                    <button
+                                        onclick="editQuestion(${exam.id}, ${index})"
+                                    >
+                                        Edit
+                                    </button>
+
+                                    <button
+                                        onclick="deleteQuestion(${exam.id}, ${index})"
+                                        style="
+                                            background:#ef4444;
+                                            margin-left:6px;
+                                        "
+                                    >
+                                        Delete
+                                    </button>
+
+                                </div>
+                            `
+                        ).join("")
+                        : `
+                            <p>
+                                No questions available.
+                            </p>
+                        `
+                }
+
+            </div>
+
+        </div>
+    `;
+}
+function addQuestion(examId) {
+    const exam = exams.find(
+        item => Number(item.id) === Number(examId)
+    );
+
+    if (!exam) {
+        alert("Exam not found.");
+        return;
+    }
+
+    $("adminScreen").innerHTML = `
+        <div class="card">
+
+            <span class="badge">
+                ADD QUESTION
+            </span>
+
+            <h2 style="margin-top:15px;">
+                ${exam.title}
+            </h2>
+
+            <p style="margin-bottom:25px;">
+                Add a new question to this examination.
+            </p>
+
+            <input
+                id="newQuestion"
+                type="text"
+                placeholder="Enter question"
+                style="
+                    width:100%;
+                    padding:14px;
+                    margin-bottom:12px;
+                    background:#0f172a;
+                    color:white;
+                    border:1px solid #334155;
+                    border-radius:8px;
+                "
+            >
+
+            <input
+                id="option0"
+                type="text"
+                placeholder="Option A"
+                style="
+                    width:100%;
+                    padding:14px;
+                    margin-bottom:12px;
+                    background:#0f172a;
+                    color:white;
+                    border:1px solid #334155;
+                    border-radius:8px;
+                "
+            >
+
+            <input
+                id="option1"
+                type="text"
+                placeholder="Option B"
+                style="
+                    width:100%;
+                    padding:14px;
+                    margin-bottom:12px;
+                    background:#0f172a;
+                    color:white;
+                    border:1px solid #334155;
+                    border-radius:8px;
+                "
+            >
+
+            <input
+                id="option2"
+                type="text"
+                placeholder="Option C"
+                style="
+                    width:100%;
+                    padding:14px;
+                    margin-bottom:12px;
+                    background:#0f172a;
+                    color:white;
+                    border:1px solid #334155;
+                    border-radius:8px;
+                "
+            >
+
+            <input
+                id="option3"
+                type="text"
+                placeholder="Option D"
+                style="
+                    width:100%;
+                    padding:14px;
+                    margin-bottom:18px;
+                    background:#0f172a;
+                    color:white;
+                    border:1px solid #334155;
+                    border-radius:8px;
+                "
+            >
+
+            <label
+                style="
+                    display:block;
+                    margin-bottom:8px;
+                    color:#94a3b8;
+                "
+            >
+                Correct Answer
+            </label>
+
+            <select
+                id="correctAnswer"
+                style="
+                    width:100%;
+                    padding:14px;
+                    margin-bottom:20px;
+                    background:#0f172a;
+                    color:white;
+                    border:1px solid #334155;
+                    border-radius:8px;
+                "
+            >
+                <option value="0">
+                    Option A
+                </option>
+
+                <option value="1">
+                    Option B
+                </option>
+
+                <option value="2">
+                    Option C
+                </option>
+
+                <option value="3">
+                    Option D
+                </option>
+            </select>
+
+            <button
+                onclick="saveNewQuestion(${exam.id})"
+            >
+                Add Question
+            </button>
+
+            <button
+                onclick="manageQuestions(${exam.id})"
+                class="secondary"
+                style="margin-left:8px;"
+            >
+                Cancel
+            </button>
+
+        </div>
+    `;
+}
+function saveNewQuestion(examId) {
+    const exam = exams.find(
+        item => Number(item.id) === Number(examId)
+    );
+
+    if (!exam) {
+        alert("Exam not found.");
+        return;
+    }
+
+    const question =
+        $("newQuestion").value.trim();
+
+    const optionA =
+        $("option0").value.trim();
+
+    const optionB =
+        $("option1").value.trim();
+
+    const optionC =
+        $("option2").value.trim();
+
+    const optionD =
+        $("option3").value.trim();
+
+    const correctAnswer =
+        Number($("correctAnswer").value);
+
+    if (
+        !question ||
+        !optionA ||
+        !optionB ||
+        !optionC ||
+        !optionD
+    ) {
+        alert(
+            "Please fill in all question and option fields."
+        );
+
+        return;
+    }
+
+    exam.questions.push({
+        q: question,
+
+        o: [
+            optionA,
+            optionB,
+            optionC,
+            optionD
+        ],
+
+        a: correctAnswer
+    });
+
+    localStorage.setItem(
+        "exams",
+        JSON.stringify(exams)
+    );
+
+    alert("Question added successfully.");
+
+    manageQuestions(exam.id);
 }
