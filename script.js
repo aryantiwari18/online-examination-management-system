@@ -638,6 +638,15 @@ function loadAdmin() {
             <h3>
                 Examination Management
             </h3>
+<button
+    onclick="addExam()"
+    style="
+        margin-top:15px;
+        margin-bottom:20px;
+    "
+>
+    + Add New Examination
+</button>
 
             <br>
 
@@ -1470,4 +1479,132 @@ function deleteQuestion(examId, questionIndex) {
     alert("Question deleted successfully.");
 
     manageQuestions(exam.id);
+}
+function addExam() {
+    $("adminScreen").innerHTML = `
+        <div class="card">
+
+            <span class="badge">
+                CREATE EXAMINATION
+            </span>
+
+            <h2 style="margin-top:15px;">
+                Add New Examination
+            </h2>
+
+            <p style="margin-bottom:25px;">
+                Create a new examination for students.
+            </p>
+
+            <label
+                style="
+                    display:block;
+                    margin-bottom:8px;
+                    color:#94a3b8;
+                "
+            >
+                Examination Title
+            </label>
+
+            <input
+                id="newExamTitle"
+                type="text"
+                placeholder="Enter examination title"
+                style="
+                    width:100%;
+                    padding:14px;
+                    margin-bottom:18px;
+                    background:#0f172a;
+                    color:white;
+                    border:1px solid #334155;
+                    border-radius:8px;
+                "
+            >
+
+            <label
+                style="
+                    display:block;
+                    margin-bottom:8px;
+                    color:#94a3b8;
+                "
+            >
+                Duration (Minutes)
+            </label>
+
+            <input
+                id="newExamDuration"
+                type="number"
+                min="1"
+                value="30"
+                placeholder="Enter duration"
+                style="
+                    width:100%;
+                    padding:14px;
+                    margin-bottom:25px;
+                    background:#0f172a;
+                    color:white;
+                    border:1px solid #334155;
+                    border-radius:8px;
+                "
+            >
+
+            <button
+                onclick="saveNewExam()"
+            >
+                Create Examination
+            </button>
+
+            <button
+                onclick="loadAdmin()"
+                class="secondary"
+                style="margin-left:8px;"
+            >
+                Cancel
+            </button>
+
+        </div>
+    `;
+}
+function saveNewExam() {
+    const title =
+        $("newExamTitle").value.trim();
+
+    const duration =
+        Number($("newExamDuration").value);
+
+    if (!title) {
+        alert(
+            "Please enter an examination title."
+        );
+
+        return;
+    }
+
+    if (!duration || duration < 1) {
+        alert(
+            "Please enter a valid duration."
+        );
+
+        return;
+    }
+
+    const newExam = {
+        id: Date.now(),
+        title: title,
+        duration: duration,
+        questions: []
+    };
+
+    exams.push(newExam);
+
+    localStorage.setItem(
+        "exams",
+        JSON.stringify(exams)
+    );
+
+    alert(
+        "Examination created successfully."
+    );
+
+    loadAdmin();
 }
