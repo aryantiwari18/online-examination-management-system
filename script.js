@@ -655,62 +655,78 @@ function loadAdmin() {
                 class="exam-grid"
             >
 
-                ${
-                    exams.length > 0
-                        ? exams.map(function (exam) {
-                            return `
-                                <div class="exam">
+               ${exams.length
+    ? exams.map(exam => `
+        <div class="exam">
 
-                                    <span class="badge">
-                                        ACTIVE
-                                    </span>
+            <span class="badge">
+                ${exam.questions.length > 0
+                    ? "READY"
+                    : "NO QUESTIONS"}
+            </span>
 
-                                    <h4>
-                                        ${exam.title}
-                                    </h4>
+            <h4 style="margin-top:12px;">
+                ${exam.title}
+            </h4>
 
-                                    <p>
-                                        ${exam.questions.length}
-                                        Questions
-                                    </p>
+            <div style="
+                display:flex;
+                gap:10px;
+                flex-wrap:wrap;
+                margin:12px 0;
+            ">
 
-                                    <p>
-                                        Duration:
-                                        ${exam.duration}
-                                        Minutes
-                                    </p>
+                <span>
+                    📝 ${exam.questions.length} Questions
+                </span>
 
-                                    <button
-                                        onclick="adminViewExam(${exam.id})"
-                                    >
-                                        View Questions
-                                    </button>
-<button
-    onclick="manageQuestions(${exam.id})"
->
-    Manage Questions
-</button>
+                <span>
+                    ⏱️ ${exam.duration} Minutes
+                </span>
 
-                                    <button
-                                        onclick="deleteExam(${exam.id})"
-                                        style="
-                                            background:#ff3333;
-                                            color:white;
-                                            border:none;
-                                            margin-top:10px;
-                                        "
-                                    >
-                                        Delete Exam
-                                    </button>
+            </div>
 
-                                </div>
-                            `;
-                        }).join("")
-                        : `
-                            <div class="exam">
-                                <h4>
-                                    No examinations available
-                                </h4>
+            <div style="
+                display:flex;
+                gap:8px;
+                flex-wrap:wrap;
+                margin-top:15px;
+            ">
+
+                <button
+                    onclick="manageQuestions(${exam.id})"
+                >
+                    Manage Questions
+                </button>
+
+                <button
+                    onclick="adminViewExam(${exam.id})"
+                    class="secondary"
+                >
+                    View Questions
+                </button>
+
+                <button
+                    onclick="deleteExam(${exam.id})"
+                    style="
+                        background:#ef4444;
+                        color:white;
+                        border:none;
+                    "
+                >
+                    Delete Exam
+                </button>
+
+            </div>
+
+        </div>
+    `).join("")
+    : `
+        <p>
+            No examinations available.
+        </p>
+    `
+}
 
                                 <p>
                                     All examinations have been deleted.
