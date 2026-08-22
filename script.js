@@ -655,7 +655,8 @@ function loadAdmin() {
                 class="exam-grid"
             >
 
-               ${exams.length
+               ${
+exams.length
     ? exams.map(exam => `
         <div class="exam">
 
