@@ -157,6 +157,45 @@ function hide(id) {
         element.classList.add("hidden");
     }
 }
+function checkSession() {
+
+const loggedIn =
+    sessionStorage.getItem("loggedIn");
+
+const savedName =
+    sessionStorage.getItem("userName");
+
+const savedRole =
+    sessionStorage.getItem("userRole");
+
+if (
+    loggedIn === "true" &&
+    savedName &&
+    savedRole
+) {
+
+    currentUser = savedName;
+
+    hide("loginScreen");
+    show("logoutBtn");
+
+    if (savedRole === "admin") {
+        loadAdmin();
+    } else {
+        loadStudent();
+    }
+
+} else {
+
+    show("loginScreen");
+    hide("studentScreen");
+    hide("adminScreen");
+    hide("examScreen");
+    hide("resultScreen");
+    hide("logoutBtn");
+}
+
+}
 
 const ADMIN_USERNAME = "Aryan";
 const ADMIN_PASSWORD = "123";
@@ -1813,4 +1852,5 @@ function adminViewExam(id) {
         </div>
     `;
 }
+checkSession();
                              
