@@ -468,3 +468,31 @@ footer {
         width: 100%;
     }
 }
+.password-wrapper {
+position: relative;
+display: flex;
+align-items: center;
+margin-bottom: 15px;
+}
+
+.password-wrapper input {
+width: 100%;
+padding-right: 70px;
+margin-bottom: 0;
+}
+
+.password-toggle {
+position: absolute;
+right: 8px;
+padding: 6px 10px;
+font-size: 12px;
+background: transparent;
+border: none;
+color: #00ff66;
+cursor: pointer;
+}
+
+.password-toggle:hover {
+background: transparent;
+box-shadow: none;
+}
