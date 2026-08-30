@@ -158,30 +158,87 @@ function hide(id) {
     }
 }
 
+const ADMIN_USERNAME = "Aryan";
+const ADMIN_PASSWORD = "123";
+const STUDENT_PASSWORD = "123";
+
 $("loginBtn").onclick = () => {
 
-    const name = $("nameInput").value.trim();
+const name = $("nameInput").value.trim();
+const role = $("roleInput").value;
+const password = $("passwordInput").value;
 
-    if (!name) {
-        alert("Please enter your name.");
+if (!name) {
+    alert("Please enter your name / Student ID.");
+    return;
+}
+
+if (!password) {
+    alert("Please enter your password.");
+    return;
+}
+
+if (role === "admin") {
+
+    if (
+        name !== ADMIN_USERNAME ||
+        password !== ADMIN_PASSWORD
+    ) {
+        alert("Invalid admin username or password.");
         return;
     }
 
-    currentUser = name;
+} else {
 
-    hide("loginScreen");
-    show("logoutBtn");
-
-    if ($("roleInput").value === "admin") {
-        loadAdmin();
-    } else {
-        loadStudent();
+    if (password !== STUDENT_PASSWORD) {
+        alert("Invalid student password.");
+        return;
     }
+}
+
+currentUser = name;
+
+sessionStorage.setItem("loggedIn", "true");
+sessionStorage.setItem("userName", currentUser);
+sessionStorage.setItem("userRole", role);
+
+hide("loginScreen");
+show("logoutBtn");
+
+if (role === "admin") {
+    loadAdmin();
+} else {
+    loadStudent();
+}
+
+};
+
+$("togglePassword").onclick = () => {
+
+const passwordInput = $("passwordInput");
+const toggleButton = $("togglePassword");
+
+if (passwordInput.type === "password") {
+
+    passwordInput.type = "text";
+    toggleButton.textContent = "Hide";
+
+} else {
+
+    passwordInput.type = "password";
+    toggleButton.textContent = "Show";
+}
+
 };
 
 $("logoutBtn").onclick = () => {
-    clearInterval(timerId);
-    location.reload();
+
+clearInterval(timerId);
+
+sessionStorage.clear();
+
+location.reload();
+
 };
 
 function loadStudent() {
